@@ -1,0 +1,7 @@
+{
+  "name": "nival-teacher",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
