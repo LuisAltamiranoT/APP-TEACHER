@@ -1,0 +1,50 @@
+export type Roles = 'ADMIN';
+
+export interface User {
+    uid?: string;
+    nombre?: string;
+    apellido?: string;
+    email?: string;
+    emailVerified?: boolean;
+    info?: string;
+    role?: Roles;
+    oficina?: string;
+    photoUrl?: string;
+    password?: string;
+    anioInicio?: any;
+    anioFin?: any;
+}
+
+export interface Curso {
+    uidMateria?: any;
+    aula?: any;
+    image?: any;
+}
+
+export interface Materia {
+    nombre?: string;
+}
+
+export interface FileI {
+    name: string;
+    imageFile: File;
+    size: string;
+    type: string;
+}
+
+
+export interface Nomina {
+    fila?: any,
+    id?: any,
+    codigoUnico?: any,
+    nombre?: any,
+    presente?: any,
+    atraso?: any,
+    falta?: any
+    opciones?: any
+}
+
+export interface NominaObligatoria {
+    codigoUnico: any,
+    nombre: any,
+}

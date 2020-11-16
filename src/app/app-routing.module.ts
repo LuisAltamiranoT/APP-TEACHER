@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { GuardGuard } from 'src/app/service/guard/guard.guard';
 
 const routes: Routes = [
   {
@@ -11,6 +12,24 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'login',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'register',
+    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
+  },
+  {
+    path: 'nombre',
+    loadChildren: () => import('./perfil/nombre/nombre.module').then( m => m.NombrePageModule)
+  },
+  {
+    path: 'perfil',
+    loadChildren: () => import('./perfil/perfil/perfil.module').then( m => m.PerfilPageModule),
+    canActivate: [GuardGuard]
+  },
+
 ];
 
 @NgModule({

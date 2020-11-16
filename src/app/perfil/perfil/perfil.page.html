@@ -1,0 +1,148 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-grid fixed>
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+      <ion-col size="12" class="ion-text-center" style="display: flex; justify-content: center">
+        <ion-avatar>
+          <a class="icon-right">
+            <mat-icon matSuffix (click)="openPhoto()">add_photo_alternate</mat-icon>
+          </a>
+          <img src="{{perfil}}" />
+        </ion-avatar>
+      </ion-col>
+    </ion-row>
+    <br>
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+      <ion-col size="12" class="ion-text-center" style="display: flex; justify-content: center">
+        <div>
+          <h1 class="font-weight-normal" id="font-p">prueba {{nombre+' '+ apellido}}</h1>
+          <p class="font-weight-normal" id="fontNival-p">prueba {{correo}}</p>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <div>
+          <h2>
+            <mat-icon matSuffix>person</mat-icon> Información:
+          </h2>
+          <ion-item class="light-back">
+            <h3 class="pl-1"> Descripción:
+              <a class="float-right text-info p-1" (click)="openInfoModal()">
+                <ion-icon name="create-outline"></ion-icon>
+              </a>
+            </h3>
+            <p class="font-weight-light pl-1" id="fontNival-p">{{informacion}}</p>
+          </ion-item>
+          <ion-item class="light-back">
+            <h3 class="pl-1"> Nombres:
+              <a class="float-right text-info p-1" (click)="openNombreModal()">
+                <ion-icon name="create-outline"></ion-icon>
+              </a>
+            </h3>
+            <p class="font-weight-light pl-1" id="fontNival-p">{{nombre}}</p>
+          </ion-item>
+          <ion-item class="light-back">
+            <h3 class="pl-1"> Apellidos:
+              <a class="float-right text-info p-1" (click)="openApellidoModal()">
+                <ion-icon name="create-outline"></ion-icon>
+              </a>
+            </h3>
+            <p class="font-weight-light pl-1" id="fontNival-p">{{apellido}}</p>
+          </ion-item>
+          <ion-item class="light-back">
+            <h3 class="pl-1"> Oficina:
+              <a class="float-right text-info p-1" (click)="openOficinaModal()">
+                <ion-icon name="create-outline"></ion-icon>
+              </a>
+            </h3>
+            <p class="font-weight-light pl-1" id="fontNival-p">{{oficina}}</p>
+          </ion-item>
+          <ion-item class="light-back">
+            <h3 class="pl-1"> Contraseña:
+              <a class="float-right text-info p-1" (click)="openPasswordModal()">
+                <ion-icon name="create-outline"></ion-icon>
+              </a>
+            </h3>
+          </ion-item>
+          <ion-item class="light-back">
+            <h3 class="pl-1"> Eliminar Cuenta
+              <a class="float-right text-danger p-1" (click)="openDeleteModal()">
+                <mat-icon matSuffix>delete_outline</mat-icon>
+              </a>
+            </h3>
+          </ion-item>
+        </div>
+      </ion-col>
+      <ion-col size="6">
+        <div class="bd-callout bd-callout-default w-100">
+          <h2>
+            <mat-icon matSuffix>access_time</mat-icon>
+            Semestre:
+            <a class="float-right text-info" (click)="openAnioLectivoModal()">
+              <ion-icon name="create-outline"></ion-icon>
+            </a>
+          </h2>
+          <ion-item class="light-back">
+            <p class="font-weight-light pl-1" id="fontNival-p">
+              Inicio: {{AnioLectivoInicio}}
+            </p>
+          </ion-item>
+          <ion-item class="light-back">
+            <p class="font-weight-light pl-1" id="fontNival-p">
+              Fin: {{AnioLectivoFin}}
+            </p>
+          </ion-item>
+        </div>
+
+        <div class="bd-callout bd-callout-default w-100">
+          <h2>
+            <mat-icon matSuffix>format_list_bulleted</mat-icon>Materias:
+            <a class="float-right text-info" (click)="openMateriaModal()">
+              <mat-icon matSuffix>add_box</mat-icon>
+            </a>
+          </h2>
+
+          <ion-item class="light-back" *ngFor="let materia of materias; let i = index">
+            <p class="font-weight-light pl-1" id="fontNival-p"><strong>{{i+1+'.'}}</strong>
+              {{materia.data.nombre}}
+              <a class="float-right text-danger" (click)="openEliminarMateriaModal(materia.data.nombre,materia.id)"
+                *ngIf="val">
+                <mat-icon>delete_outline</mat-icon>
+              </a>
+              <a class="float-right text-info" (click)="openEditMateriaModal(materia.data.nombre,materia.id)"
+                *ngIf="val">
+                <ion-icon name="create-outline"></ion-icon>
+              </a>
+            </p>
+          </ion-item>
+        </div>
+        <div class="bd-callout bd-callout-default w-100 my-2">
+          <h2>
+            <mat-icon matSuffix>library_books</mat-icon>Cursos:
+            <a class="float-right text-info" (click)="openCurso()">
+              <mat-icon matSuffix>add_box</mat-icon>
+            </a>
+          </h2>
+          <ion-item class="light-back" *ngFor="let curso of cursoCompleto; let i = index">
+            <p class="font-weight-light pl-1" id="fontNival-p"><strong>{{i+1+'.'}}</strong>
+              {{curso.nombre}}
+              <a class="float-right text-danger" (click)="eliminarCurso(curso.id)" *ngIf="val">
+                <mat-icon>delete_outline</mat-icon>
+              </a>
+              <a class="float-right text-info" (click)="editarCurso(curso.idCurso)" *ngIf="val">
+                <ion-icon name="create-outline"></ion-icon>
+              </a>
+            </p>
+          </ion-item>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>
