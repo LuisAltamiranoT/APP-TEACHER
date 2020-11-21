@@ -1,6 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+
+//modal
+import { MatButtonModule } from '@angular/material/button';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -13,8 +19,12 @@ import { EliminarDataPage } from './eliminar-data.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    EliminarDataPageRoutingModule
+    EliminarDataPageRoutingModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatButtonModule
   ],
   declarations: [EliminarDataPage]
 })
-export class EliminarDataPageModule {}
+export class EliminarDataPageModule { }

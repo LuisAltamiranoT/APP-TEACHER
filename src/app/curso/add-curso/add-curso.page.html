@@ -1,0 +1,259 @@
+<ion-header>
+  <ion-toolbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-sm-12>
+        <h3>
+          <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>Nuevo Curso
+        </h3>
+        <hr class="hr-nival">
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12 col-sm-12>
+        <div class="bd-callout bd-callout-default w-100">
+          <h2>
+            <a>
+              <mat-icon class="fa-nival" matSuffix (click)="photoInput.click()">cloud_upload</mat-icon>
+            </a>
+            Foto
+            <a style="float: right;" (click)="photoQuit()" *ngIf="validImage">
+              <mat-icon class="fa-nival" style="color: red;" matSuffix>delete_forever</mat-icon>
+            </a>
+          </h2>
+          <div>
+            <img [src]="photoSelected || '../../../assets/icon/clase.jpg'">
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <!-- ***************************************** Formulario crear curso *************************-->
+        <form class="p-1 mt-1" [formGroup]="cursoForm" (ngSubmit)="addCurso(cursoForm)">
+          <div class="bd-callout bd-callout-default w-100">
+            <h2>
+              <mat-icon class="fa-nival" matSuffix>format_list_bulleted</mat-icon> Información:
+            </h2>
+            <input type="file" style="display: none;" (change)="onPhotoSelected($event)" #photoInput
+              formControlName="image">
+            <ion-row>
+              <ion-col col-12 col-sm-12>
+                <mat-form-field appearance="standard" class="input-modal">
+                  <mat-label>Materia</mat-label>
+                  <mat-select formControlName="materiaSelect" (selectionChange)="selectMateria($event.value)">
+                    <mat-option *ngFor="let materia of materias" value="{{materia.id}}+//+{{materia.data.nombre}}">
+                      {{materia.data.nombre}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-12 col-sm-12>
+                <mat-form-field appearance="standard" class="input-modal">
+                  <mat-label>Aula</mat-label>
+                  <input matInput [type]="'text'" autocomplete="off" placeholder="{{placeholder}}"
+                    formControlName="aula">
+                </mat-form-field>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-12 col-sm-12>
+                <mat-label>
+                  <mat-icon class="fa-nival" matSuffix>today</mat-icon>Horario
+                </mat-label>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-12 col-sm-12 *ngIf="validacionDeMateria">
+                <div class="example-container mat-elevation-z2">
+                  <table mat-table [dataSource]="dataSource">
+                    <!-- Position Column -->
+                    <ng-container matColumnDef="hora" sticky>
+                      <th mat-header-cell *matHeaderCellDef> Hora. </th>
+                      <td mat-cell *matCellDef="let element"> {{element.hora}}
+                      </td>
+                    </ng-container>
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="lunes">
+                      <th mat-header-cell *matHeaderCellDef> Lunes </th>
+                      <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
+                        <!--Info para nuevas materias 
+                                               LS estado actual LD estado Almacenado-->
+
+                        <ion-button expand="full" size="small" color="materia" *ngIf="element.LS"
+                          style="font-size: 10px;">
+                          {{element.lunes}}
+                          <br>
+                          <a (click)="delHoraDiaLunes(l)" style="color: white">
+                            <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
+                          </a>
+                        </ion-button>
+                        <!--secundary para nuevas materias -->
+                        <ion-button expand="full" size="small" color="mat_registrada" *ngIf="element.LD"
+                          style="font-size: 10px;">
+                          {{element.lunes}}
+                        </ion-button>
+                        <a class="text-center text-muted" (click)="setHoraDiaLunes(l)"
+                          *ngIf="!element.LS && !element.LD">
+                          <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="martes">
+                      <th mat-header-cell *matHeaderCellDef> Martes </th>
+                      <td class="px-1" mat-cell *matCellDef="let element, let m = index;">
+                        <!--Info para nuevas materias 
+                                                LS estado actual LD estado Almacenado-->
+                        <ion-button expand="full" size="small" color="materia" *ngIf="element.MS"
+                          style="font-size: 10px;">
+                          {{element.martes}}
+                          <br>
+                          <a (click)="delHoraDiaMartes(m)" style="color: white">
+                            <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
+                          </a>
+                        </ion-button>
+                        <!--secundary para nuevas materias -->
+                        <ion-button expand="full" size="small" color="mat_registrada" *ngIf="element.MD"
+                          style="font-size: 10px;">
+                          {{element.martes}}
+                        </ion-button>
+                        <a class="text-center text-muted" (click)="setHoraDiaMartes(m)"
+                          *ngIf="!element.MS && !element.MD">
+                          <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="miercoles">
+                      <th mat-header-cell *matHeaderCellDef> Miercoles </th>
+                      <td class="px-1" mat-cell *matCellDef="let element, let mi = index;">
+                        <!--Info para nuevas materias 
+                                                LS estado actual LD estado Almacenado-->
+                        <ion-button expand="full" size="small" color="materia" *ngIf="element.MiS"
+                          style="font-size: 10px;">
+                          {{element.miercoles}}
+                          <br>
+                          <a (click)="delHoraDiaMiercoles(mi)" style="color: white">
+                            <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
+                          </a>
+                        </ion-button>
+                        <!--secundary para nuevas materias -->
+                        <ion-button expand="full" size="small" color="mat_registrada" *ngIf="element.MiD"
+                          style="font-size: 10px;">
+                          {{element.miercoles}}
+                        </ion-button>
+                        <a class="text-center text-muted" (click)="setHoraDiaMiercoles(mi)"
+                          *ngIf="!element.MiS && !element.MiD">
+                          <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="jueves">
+                      <th mat-header-cell *matHeaderCellDef> Jueves </th>
+                      <td class="px-1" mat-cell *matCellDef="let element, let j = index;">
+                        <!--Info para nuevas materias 
+                                                LS estado actual LD estado Almacenado-->
+                        <ion-button expand="full" size="small" color="materia" *ngIf="element.JS"
+                          style="font-size: 10px;">
+                          {{element.jueves}}
+                          <br>
+                          <a (click)="delHoraDiaJueves(j)" style="color: white">
+                            <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
+                          </a>
+                        </ion-button>
+                        <!--secundary para nuevas materias -->
+                        <ion-button expand="full" size="small" color="mat_registrada" *ngIf="element.JD"
+                          style="font-size: 10px;">
+                          {{element.jueves}}
+                        </ion-button>
+                        <a class="text-center text-muted" (click)="setHoraDiaJueves(j)"
+                          *ngIf="!element.JS && !element.JD">
+                          <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="viernes">
+                      <th mat-header-cell *matHeaderCellDef> viernes </th>
+                      <td class="px-1" mat-cell *matCellDef="let element, let v = index;">
+                        <!--Info para nuevas materias 
+                                                LS estado actual LD estado Almacenado-->
+                        <ion-button expand="full" size="small" color="materia" *ngIf="element.VS"
+                          style="font-size: 10px;">
+                          {{element.viernes}}
+                          <br>
+                          <a (click)="delHoraDiaViernes(v)" style="color: white">
+                            <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
+                          </a>
+                        </ion-button>
+                        <!--secundary para nuevas materias -->
+                        <ion-button expand="full" size="small" color="mat_registrada" *ngIf="element.VD"
+                          style="font-size: 10px;">
+                          {{element.viernes}}
+                        </ion-button>
+                        <a class="text-center text-muted" (click)="setHoraDiaViernes(v)"
+                          *ngIf="!element.VS && !element.VD">
+                          <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                  </table>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-12 col-sm-12>
+                <ion-button expand="full" size="small" color="file_excel">
+                  <a class="text-white bg-info rounded px-2 py-1 mr-2" style="color: white" (click)="fileInput.click()">
+                    <ion-icon class="fa-nival" style="font-size: 20px;" name="document-text-outline"></ion-icon> Agregar
+                    Nomina
+                  </a>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-12 col-sm-12 class="ion-text-center" style="display: flex; justify-content: center">
+                {{nombreFile}}
+                <br>
+                <a class="text-white bg-danger rounded px-2 py-1 mr-2" *ngIf="validFile" (click)="clearFile()"
+                  style="color: red">
+                  <mat-icon class="fa-nival" matSuffix>cancel_presentation</mat-icon>
+                </a>
+                <input type="file" style="display: none;" (change)="onFileChange($event)" #fileInput
+                  formControlName="file">
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-12 col-sm-12>
+                <div *ngIf="validate else barra">
+                </div>
+              </ion-col>
+            </ion-row>
+          </div>
+          <ion-row>
+            <ion-col col-12 col-sm-12>
+              <ion-button type="submit" expand="full" size="small" [disabled]="!cursoForm.valid">
+                <ion-icon name="send-sharp"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+        <!-- ****************** Fin de formulario crear curso *************************-->
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ng-template #login>
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+</ng-template>
+<ion-footer>
+  <ion-toolbar>
+  </ion-toolbar>
+</ion-footer>

@@ -25,6 +25,150 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
+:root {
+    --ion-color-white: #FFFFFF;
+    --ion-color-white-rgb: 255,255,255;
+    --ion-color-white-contrast: #000000;
+    --ion-color-white-contrast-rgb: 0,0,0;
+    --ion-color-white-shade: #e0e0e0;
+    --ion-color-white-tint: #ffffff;
+  }
+  
+  .ion-color-white {
+    --ion-color-base: var(--ion-color-white);
+    --ion-color-base-rgb: var(--ion-color-white-rgb);
+    --ion-color-contrast: var(--ion-color-white-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-white-contrast-rgb);
+    --ion-color-shade: var(--ion-color-white-shade);
+    --ion-color-tint: var(--ion-color-white-tint);
+  }
+
+  :root {
+    --ion-color-red: #d9534f;
+    --ion-color-red-rgb: 217,83,79;
+    --ion-color-red-contrast: #ffffff;
+    --ion-color-red-contrast-rgb: 255,255,255;
+    --ion-color-red-shade: #bf4946;
+    --ion-color-red-tint: #dd6461;
+  }
+  
+  .ion-color-red {
+    --ion-color-base: var(--ion-color-red);
+    --ion-color-base-rgb: var(--ion-color-red-rgb);
+    --ion-color-contrast: var(--ion-color-red-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-red-contrast-rgb);
+    --ion-color-shade: var(--ion-color-red-shade);
+    --ion-color-tint: var(--ion-color-red-tint);
+  }
+
+  :root {
+    --ion-color-yellow: #f0ad4e;
+    --ion-color-yellow-rgb: 240,173,78;
+    --ion-color-yellow-contrast: #ffffff;
+    --ion-color-yellow-contrast-rgb: 255,255,255;
+    --ion-color-yellow-shade: #d39845;
+    --ion-color-yellow-tint: #f2b560;
+  }
+  
+  .ion-color-yellow {
+    --ion-color-base: var(--ion-color-yellow);
+    --ion-color-base-rgb: var(--ion-color-yellow-rgb);
+    --ion-color-contrast: var(--ion-color-yellow-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-yellow-contrast-rgb);
+    --ion-color-shade: var(--ion-color-yellow-shade);
+    --ion-color-tint: var(--ion-color-yellow-tint);
+  }
+
+  :root {
+    --ion-color-blue: #0275d8;
+    --ion-color-blue-rgb: 2,117,216;
+    --ion-color-blue-contrast: #ffffff;
+    --ion-color-blue-contrast-rgb: 255,255,255;
+    --ion-color-blue-shade: #0267be;
+    --ion-color-blue-tint: #1b83dc;
+  }
+  
+  .ion-color-blue {
+    --ion-color-base: var(--ion-color-blue);
+    --ion-color-base-rgb: var(--ion-color-blue-rgb);
+    --ion-color-contrast: var(--ion-color-blue-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-blue-contrast-rgb);
+    --ion-color-shade: var(--ion-color-blue-shade);
+    --ion-color-tint: var(--ion-color-blue-tint);
+  }
+
+  :root {
+    --ion-color-info: #5bc0de;
+    --ion-color-info-rgb: 91,192,222;
+    --ion-color-info-contrast: #ffffff;
+    --ion-color-info-contrast-rgb: 255,255,255;
+    --ion-color-info-shade: #50a9c3;
+    --ion-color-info-tint: #6bc6e1;
+  }
+  
+  .ion-color-info {
+    --ion-color-base: var(--ion-color-info);
+    --ion-color-base-rgb: var(--ion-color-info-rgb);
+    --ion-color-contrast: var(--ion-color-info-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-info-contrast-rgb);
+    --ion-color-shade: var(--ion-color-info-shade);
+    --ion-color-tint: var(--ion-color-info-tint);
+  }
+
+  :root {
+    --ion-color-materia: #9c9c9c;
+    --ion-color-materia-rgb: 156,156,156;
+    --ion-color-materia-contrast: #ffffff;
+    --ion-color-materia-contrast-rgb: 255,255,255;
+    --ion-color-materia-shade: #898989;
+    --ion-color-materia-tint: #a6a6a6;
+  }
+  
+  .ion-color-materia {
+    --ion-color-base: var(--ion-color-materia);
+    --ion-color-base-rgb: var(--ion-color-materia-rgb);
+    --ion-color-contrast: var(--ion-color-materia-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-materia-contrast-rgb);
+    --ion-color-shade: var(--ion-color-materia-shade);
+    --ion-color-tint: var(--ion-color-materia-tint);
+  }
+
+  :root {
+    --ion-color-mat_registrada: #18a2b8;
+    --ion-color-mat_registrada-rgb: 24,162,184;
+    --ion-color-mat_registrada-contrast: #ffffff;
+    --ion-color-mat_registrada-contrast-rgb: 255,255,255;
+    --ion-color-mat_registrada-shade: #158fa2;
+    --ion-color-mat_registrada-tint: #2fabbf;
+  }
+  
+  .ion-color-mat_registrada {
+    --ion-color-base: var(--ion-color-mat_registrada);
+    --ion-color-base-rgb: var(--ion-color-mat_registrada-rgb);
+    --ion-color-contrast: var(--ion-color-mat_registrada-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-mat_registrada-contrast-rgb);
+    --ion-color-shade: var(--ion-color-mat_registrada-shade);
+    --ion-color-tint: var(--ion-color-mat_registrada-tint);
+  }
+
+  :root {
+    --ion-color-file_excel: #008f39;
+    --ion-color-file_excel-rgb: 0,143,57;
+    --ion-color-file_excel-contrast: #ffffff;
+    --ion-color-file_excel-contrast-rgb: 255,255,255;
+    --ion-color-file_excel-shade: #007e32;
+    --ion-color-file_excel-tint: #1a9a4d;
+  }
+  
+  .ion-color-file_excel {
+    --ion-color-base: var(--ion-color-file_excel);
+    --ion-color-base-rgb: var(--ion-color-file_excel-rgb);
+    --ion-color-contrast: var(--ion-color-file_excel-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-file_excel-contrast-rgb);
+    --ion-color-shade: var(--ion-color-file_excel-shade);
+    --ion-color-tint: var(--ion-color-file_excel-tint);
+  }
+
 #logo{
     height: 50px;
     padding: 0px;
@@ -35,6 +179,11 @@
     height: 40px;
     padding: 0px;
     margin: 0px;
+}
+
+#logoToolbar{
+  height: 100%;
+  object-position: 0px;
 }
 
 .input-modal{
@@ -48,3 +197,115 @@
 .aNival{
     color: black;
 }
+
+.bd-callout {
+    padding: 1rem;
+    margin-top: .25rem;
+    margin-bottom: .25rem;
+    border: 1px solid #eee;
+    border-left-width: .25rem;
+    border-radius: .25rem;
+}
+
+.bd-callout-info {
+    border-left-color: #5bc0de;
+}
+
+
+.bd-callout-default {
+    border-left-color: #333333;
+}
+
+h2{
+    margin-bottom: .15rem  !important;
+}
+
+h3{
+    margin-bottom: .4rem  !important;
+}
+
+h4{
+    margin-bottom: .15rem  !important;
+}
+
+p{
+    font-size: .85rem !important;
+    font-weight: bold;
+}
+
+#fontNival-p{
+    font: 200 16px/28px Roboto, "Helvetica Neue", sans-serif !important;
+}
+
+.fa-nival{
+    vertical-align: middle;
+}
+
+#font-p{
+    margin: 0.5px;
+    padding: 0px !important;
+}
+
+a{
+    cursor: pointer;
+}
+
+.fondo {
+    background-color: rgb(248, 249, 250);
+    padding-left: .2rem;
+}
+
+.fullNivalWidth {
+    width: 100%;
+}
+
+.avatarNival {     
+    width:100% !important;  
+    height : 100% !important;  
+    max-width: 140px !important;  //any size
+    max-height: 140px !important; //any size 
+}
+
+#progreesbar{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hr-nival{
+  margin-top: 0.4rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0,0,0,.1);
+}
+
+.shadow-red{
+  box-shadow: 0px 14px 25px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+/*codigo QR */
+.bshadow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0px 0px .8px #222222);
+  opacity: .9;
+}
+
+.aNival{
+  color: black;
+}
+
+.secondaryNival{
+  color:#4c8dff;
+}
+
+.secondaryNival:hover{
+  color:#3dc2ff;
+}
+
+.main-button{
+  --box-shadow:none;
+}
+

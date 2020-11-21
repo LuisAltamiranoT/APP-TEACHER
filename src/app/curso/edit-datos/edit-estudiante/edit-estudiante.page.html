@@ -1,0 +1,48 @@
+<form [formGroup]="estudianteForm" (ngSubmit)="onClick()">
+  <h2 mat-dialog-title class="pb-1">Editar Estudiante:</h2>
+  <div *ngIf="validate else barra">
+  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-sm-4>
+        <mat-form-field class="fullNivalWidth">
+          <mat-label>Código Único</mat-label>
+          <input matInput [type]="'text'" autocomplete="off" placeholder="{{placeholderCodigo}}"
+            formControlName="codigoUnico" maxlength="9"
+            oninput="if(this.value.length > this.maxLength) this.value=this.value.slice(0,this.maxLength);"
+            (keypress)="IngresarSoloNumeros($event)">
+        </mat-form-field>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12 col-sm-4>
+        <mat-form-field class="fullNivalWidth">
+          <mat-label>Nombres</mat-label>
+          <input matInput [type]="'text'" autocomplete="off" placeholder="{{placeholder}}" formControlName="estudiante"
+            (keypress)="IngresarSoloLetras($event)">
+        </mat-form-field>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12 col-sm-4>
+        <ion-button type="submit" expand="full" size="small" [disabled]="!estudianteForm.valid">
+          <ion-icon name="send-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col col-12 col-sm-4>
+        <ion-button (click)="eraser()" color="yellow" expand="full" size="small">
+          <ion-icon name="backspace-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col col-12 col-sm-4>
+        <ion-button (click)=" dimissModal()" color="red" expand="full" size="small">
+          <ion-icon name="close-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
+
+<ng-template #barra>
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+</ng-template>

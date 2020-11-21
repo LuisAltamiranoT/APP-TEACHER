@@ -1,17 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+// Librerias
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+
 import { IonicModule } from '@ionic/angular';
 
 import { PerfilPageRoutingModule } from './perfil-routing.module';
 import { PerfilPage } from './perfil.page';
-
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-
-import { AuthService } from 'src/app/service/auth.service';
-import { GuardGuard } from 'src/app/service/guard/guard.guard';
 
 @NgModule({
   imports: [
@@ -19,14 +18,15 @@ import { GuardGuard } from 'src/app/service/guard/guard.guard';
     FormsModule,
     IonicModule,
     PerfilPageRoutingModule,
-    MatDialogModule,
+    // Librerias
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
-    ReactiveFormsModule
+    MatDialogModule
   ],
   declarations: [PerfilPage],
   providers: [
-    AuthService,
-    GuardGuard,
   ],
 })
 export class PerfilPageModule { }

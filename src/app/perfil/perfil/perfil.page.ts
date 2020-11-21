@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+//import { ModalController } from '@ionic/angular';
+
 import { InfoPage } from 'src/app/perfil/info/info.page';
 import { NombrePage } from 'src/app/perfil/nombre/nombre.page';
 
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 
 import { ApellidoPage } from 'src/app/perfil/apellido/apellido.page';
 import { PasswordPage } from 'src/app/perfil/password/password.page';
-import { DeletePage } from 'src/app/perfil/delete/delete.page';
+import { CursoGroupPage } from 'src/app/curso/curso-group/curso-group.page';
 import { MateriaPage } from 'src/app/perfil/materia/materia.page';
 import { OficinaPage } from 'src/app/perfil/oficina/oficina.page';
 import { EditarMateriaPage } from 'src/app/perfil/editar-materia/editar-materia.page';
@@ -18,7 +20,7 @@ import { FotoPage } from 'src/app/perfil/foto/foto.page';
 
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-//import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-perfil',
@@ -27,8 +29,6 @@ import { Subscription } from 'rxjs';
 })
 
 export class PerfilPage implements OnInit {
-  //variableTemporal
- // public user$: Observable<any> = this.authService.afAuth.user;
 
   image = "../../../../assets/icon/profe.jpg";
   perfil = "../../../../assets/icon/perfil.jpg";
@@ -62,6 +62,7 @@ export class PerfilPage implements OnInit {
   textodesencriptado_mal: string;
 
   constructor(
+   // public modalController: ModalController,
     public ventana: MatDialog,
     private authService: AuthService,
     private router: Router
@@ -98,18 +99,17 @@ export class PerfilPage implements OnInit {
   }
 
   dataUser() {
-    console.log('algo');
     this.suscripcion1 = this.authService.getDataUser().subscribe((data) => {
-      console.log('algo', data);
-      this.nombre = data.nombre;
-      this.apellido = data.apellido;
-      this.correo = data.email;
-      this.informacion = data.info;
-      this.oficina = data.oficina;
-      this.AnioLectivoInicio = data.anioInicio;
-      this.AnioLectivoFin = data.anioFin;
-      this.perfil = data.photoUrl;
-      console.log('algo', data);
+      let dataUser: any = [data.payload.data()];
+      this.nombre =dataUser[0].nombre;
+      this.apellido = dataUser[0].apellido;
+      this.correo = dataUser[0].email;
+      this.informacion = dataUser[0].info;
+      this.oficina = dataUser[0].oficina;
+      this.AnioLectivoInicio = dataUser[0].anioInicio;
+      this.AnioLectivoFin = dataUser[0].anioFin;
+      this.perfil = dataUser[0].photoUrl;
+      console.log(data);
     });
   }
 
@@ -160,86 +160,86 @@ export class PerfilPage implements OnInit {
     this.router.navigate(['edit-curso', idCurso]);
   }
 
-  openAnioLectivoModal() {
-    this.openMaterial(EditarAnioPage);
-  }
-
-  openNombreModal() {
-    this.openMaterial1(NombrePage, this.nombre);
-  }
-
-  openInfoModal() {
-    this.openMaterial1(InfoPage, this.informacion);
-  }
-
-  openApellidoModal() {
-    this.openMaterial1(ApellidoPage, this.apellido);
-  }
-
-  openOficinaModal() {
-    this.openMaterial1(OficinaPage, this.oficina);
-  }
-
-  openPasswordModal() {
-    this.openMaterial1(PasswordPage, this.password);
-  }
-
-  openMateriaModal() {
-    this.openMaterial(MateriaPage);
-  }
-
-  openEditMateriaModal(data: any, idData: any) {
-    let dataMateria = {
-      nombre: data,
-      id: idData,
-      array: this.materias
-    }
-    this.openMaterial1(EditarMateriaPage, dataMateria);
-  }
-
-  openEliminarMateriaModal(data: any, idData: any) {
-    let dataMateria = {
-      nombre: data,
-      id: idData
-    }
-    this.openMaterial1(EliminarDataPage, dataMateria);
-  }
-
-  openPhoto() {
-    if (this.perfil != "../../../../assets/perfil.jpg") {
-      this.ventana.open(FotoPage,
-        { width: ' 25rem', data: this.perfil }).afterClosed().subscribe(item => {
-        });
-    } else {
-      this.ventana.open(FotoPage,
-        { width: ' 25rem', data: 'no-image' }).afterClosed().subscribe(item => {
-        });
-    }
-  }
+   openAnioLectivoModal() {
+     this.openMaterial(EditarAnioPage);
+   }
+ 
+   openNombreModal() {
+     this.openMaterial1(NombrePage, this.nombre);
+   }
+ 
+   openInfoModal() {
+     this.openMaterial1(InfoPage, this.informacion);
+   }
+ 
+   openApellidoModal() {
+     this.openMaterial1(ApellidoPage, this.apellido);
+   }
+ 
+   openOficinaModal() {
+     this.openMaterial1(OficinaPage, this.oficina);
+   }
+ 
+   openPasswordModal() {
+     this.openMaterial1(PasswordPage, this.password);
+   }
+ 
+   openMateriaModal() {
+     this.openMaterial(MateriaPage);
+   }
+ 
+   openEditMateriaModal(data: any, idData: any) {
+     let dataMateria = {
+       nombre: data,
+       id: idData,
+       array: this.materias
+     }
+     this.openMaterial1(EditarMateriaPage, dataMateria);
+   }
+ 
+   openEliminarMateriaModal(data: any, idData: any) {
+     let dataMateria = {
+       nombre: data,
+       id: idData
+     }
+     this.openMaterial1(EliminarDataPage, dataMateria);
+   }
+ 
+   openPhoto() {
+     if (this.perfil != "../../../../assets/perfil.jpg") {
+       this.ventana.open(FotoPage,
+         { width: ' 25rem', data: this.perfil }).afterClosed().subscribe(item => {
+         });
+     } else {
+       this.ventana.open(FotoPage,
+         { width: ' 25rem', data: 'no-image' }).afterClosed().subscribe(item => {
+         });
+     }
+   }
 
   openDeleteModal() {
     console.log("hay que borar datos");
   }
 
-  openMaterial(Page: any) {
-    this.ventana.open(Page,
-      { width: ' 25rem' }).afterClosed().subscribe(item => {
-        //this.ListaDepartamentos();
-        // Aqui va algo que quieras hacer al cerrar el Pagee
-        // yo se poner la actualizacion de la pagina jejjeje
-      });
-  }
-
-  openMaterial1(Page: any, info: any) {
-    this.ventana.open(Page,
-      { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
-      });
-  }
+   openMaterial(Page: any) {
+     this.ventana.open(Page,
+       { width: ' 25rem' }).afterClosed().subscribe(item => {
+         //this.ListaDepartamentos();
+         // Aqui va algo que quieras hacer al cerrar el Pagee
+         // yo se poner la actualizacion de la pagina jejjeje
+       });
+   }
+ 
+   openMaterial1(Page: any, info: any) {
+     this.ventana.open(Page,
+       { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+       });
+   }
 
 
   openCurso() {
     if (this.materias.length != 0) {
-      this.router.navigate(['curso']);
+      this.router.navigate(['add-curso']);
     } else {
       this.authService.showInfo("Agregue una materia en su lista");
     }

@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+//import { NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { FormControl, FormGroup } from '@angular/forms';
+
+import { AuthService } from 'src/app/service/auth/auth.service';
 
 @Component({
   selector: 'app-delete',
@@ -7,9 +11,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DeletePage implements OnInit {
 
-  constructor() { }
+  deleteForm = new FormGroup({
+    password: new FormControl('')
+  })
 
-  ngOnInit() {
+  constructor(
+   // public activeModal: NgbActiveModal,
+    //private modalService: NgbModal,
+    private authService: AuthService
+  ) { }
+
+  ngOnInit(): void {
+  }
+
+  onDelete() {
+
+  }
+  dimissModal() {
+    //this.activeModal.dismiss();
   }
 
 }

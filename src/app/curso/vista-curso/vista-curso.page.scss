@@ -1,0 +1,47 @@
+.example-container {
+    min-width: 83.5vw;
+    max-height: 77vh;
+    overflow: auto;
+  }
+  
+  table {
+    width: 100%;
+  }
+  .mat-header-cell, .mat-footer-cell, .mat-cell {
+    box-sizing: border-box;
+    text-align: center;
+    justify-content:center;
+  }
+  
+  .busqueda1{
+    font-size: 14px;
+    width: 60%;
+    padding-left: 1rem;
+    padding-top: 1rem;
+  }
+  
+  td.mat-column-fila {
+    width: 10px;
+    padding-right: 8px;
+  }
+  
+  td.mat-column-codigoUnico {
+    width: 100px;
+    padding-right: 8px;
+  }
+  td.mat-column-nombre {
+    width:300px;
+    padding-right: 8px;
+  }
+  td.mat-column-presente {
+    width: 100px;
+    padding-right: 8px;
+  }
+  td.mat-column-atraso {
+    width: 100px;
+    padding-right: 8px;
+  }
+  td.mat-column-falta {
+    width: 100px;
+    padding-right: 8px;
+  }

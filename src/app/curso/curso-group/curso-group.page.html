@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col col-12 col-sm-12 class="ion-align-self-center">
+        <h3 class="font-weight-normal">
+          <mat-icon class="fa-nival" matSuffix>folder_special
+          </mat-icon> Mis Clases
+          <a style="float: right; text-decoration: none;" [routerLink]="['/add-curso']">
+            <mat-icon class="fa-nival" matSuffix>add_box</mat-icon> Agregar Clase
+          </a>
+        </h3>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12 col-sm-12>
+        <hr class="hr-nival">
+      </ion-col>
+    </ion-row>
+    <ion-row *ngFor="let curso of cursoVista">
+      <ion-col col-12 col-sm-12>
+        <mat-card class="example-card">
+          <mat-card-header>
+            <!--   <img mat-card-avatar class="example-header-image" src="{{imgProfesor}}" />-->
+            <mat-card-title>{{curso.nombre}}</mat-card-title>
+            <a style="float: right;" (click)="openEditCurso(curso.idCurso)">
+              <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+            </a>
+          </mat-card-header>
+          <ion-row>
+            <ion-col col-12 col-sm-12>
+              <a (click)="openPhoto(curso.image)">
+                <img [src]="curso.image" alt="Imagen curso">
+              </a>
+            </ion-col>
+          </ion-row>
+          <mat-card-actions>
+            <ion-row>
+              <ion-col col-12 col-sm-12>
+                <ion-button expand="full" size="small" color="info" (click)="openCurso(curso.idCurso)">
+                  <ion-icon name="send-sharp"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </mat-card-actions>
+        </mat-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+  </ion-toolbar>
+</ion-footer>

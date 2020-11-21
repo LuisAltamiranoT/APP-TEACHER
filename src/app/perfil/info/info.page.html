@@ -1,9 +1,32 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>info</ion-title>
-  </ion-toolbar>
-</ion-header>
+<form [formGroup]="infoForm" (ngSubmit)="onClick()">
+  <h2 mat-dialog-title class="pb-1">Información:</h2>
+  <div *ngIf="validate else barra">
+  </div>
+  <mat-form-field appearance="standard" class="input-modal">
+    <mat-label>Descríbete</mat-label>
+    <textarea matInput placeholder={{placeholder}} formControlName="info"></textarea>
+  </mat-form-field>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-sm-4>
+        <ion-button type="submit" expand="full" size="small" [disabled]="!infoForm.valid">
+          <ion-icon name="send-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col col-12 col-sm-4>
+        <ion-button (click)="eraser()" color="yellow" expand="full" size="small">
+          <ion-icon name="backspace-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col col-12 col-sm-4>
+        <ion-button (click)=" dimissModal()" color="red" expand="full" size="small">
+          <ion-icon name="close-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
 
-<ion-content>
-
-</ion-content>
+<ng-template #barra>
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+</ng-template>

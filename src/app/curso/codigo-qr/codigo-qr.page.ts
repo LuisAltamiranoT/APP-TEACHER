@@ -1,0 +1,30 @@
+import { Component, OnInit } from '@angular/core';
+import { NgxQrcodeElementTypes, NgxQrcodeErrorCorrectionLevels } from '@techiediaries/ngx-qrcode';
+import { ActivatedRoute } from '@angular/router';
+
+
+@Component({
+  selector: 'app-codigo-qr',
+  templateUrl: './codigo-qr.page.html',
+  styleUrls: ['./codigo-qr.page.scss'],
+})
+export class CodigoQrPage implements OnInit {
+
+  elementType = NgxQrcodeElementTypes.IMG;
+  correctionLevel = NgxQrcodeErrorCorrectionLevels.HIGH;
+  value: any;
+
+  dato: any;
+
+  constructor(
+    private _route: ActivatedRoute,
+  ) { }
+
+  ngOnInit(): void {
+    this.dato = this._route.snapshot.paramMap.get('data');
+    console.log(this.dato);
+    this.value = this.dato;
+    // this.value = "../../../assets/perfil.jpg"
+  }
+
+}

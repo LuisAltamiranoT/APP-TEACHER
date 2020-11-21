@@ -4,6 +4,8 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
+import { Location } from '@angular/common';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -13,7 +15,8 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    public location: Location
   ) {
     this.initializeApp();
   }
@@ -23,5 +26,26 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+  }
+
+  //permite remover el navbar de algunas direcciones
+  remove() {
+    let title = this.location.prepareExternalUrl(this.location.path());
+    title = title.slice(1).split("/")[0];
+    if (title === "home" || title === "login" || title === "register" || title === "send-email" || title === "forgot-password") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  removeFooter() {
+    let title = this.location.prepareExternalUrl(this.location.path());
+    title = title.slice(1).split("/")[0];
+    if (title === "home" || title === "login" || title === "register" || title === "send-email" || title === "forgot-password") {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

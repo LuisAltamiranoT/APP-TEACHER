@@ -5,14 +5,13 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 
 import { Observable, of, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
+import { switchMap, first } from 'rxjs/operators';
 import firebase from 'firebase/app';
 //import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 
 import { RoleValidator } from 'src/app/shared/helpers/rolValidator';
-import { User, Curso, Materia, Nomina, NominaObligatoria } from '../../app/shared/models/user.interface';
+import { User, Curso, Materia, Nomina, NominaObligatoria } from 'src/app/shared/models/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +36,9 @@ export class AuthService extends RoleValidator {
       switchMap(user => {
         if (user) {
           this.dataUser = user.uid;
-          return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
+          return this.afs.doc<User>(`users/${user.uid}`).valueChanges().pipe(
+            first(data => data.role === 'ADMIN' || data.role === 'EDITOR')
+          )
         }
         return of(null);
       })
@@ -59,10 +60,8 @@ export class AuthService extends RoleValidator {
 
   async login(email: string, password: string): Promise<User> {
     try {
-      const { user } = await this.afAuth.signInWithEmailAndPassword(
-        email,
-        password
-      );
+      await this.afAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      const { user } = await this.afAuth.signInWithEmailAndPassword(email, password);
       await this.updateUserData(user);
       return user;
     } catch (error) {
@@ -99,19 +98,15 @@ export class AuthService extends RoleValidator {
 
 
   //actualiza la informacion de email verificado
-  private async updateUserData(user: User) {
-    if (user.emailVerified === true) {
-
-    } else {
-      const userRef: AngularFirestoreDocument<User> = this.afs.doc(
-        `users/${user.uid}`
-      );
-      const data: User = {
-        emailVerified: user.emailVerified
-      };
-
-      return await userRef.set(data, { merge: true });
-    }
+  private updateUserData(user: User) {
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
+    const data: User = {
+      uid: user.uid,
+      email: user.email,
+      emailVerified: user.emailVerified
+    };
+    //si existe que realixe merge
+    return userRef.set(data, { merge: true });
   }
 
   private async registerDataUser(user: User, nombre: string, apellido: string) {
@@ -133,25 +128,27 @@ export class AuthService extends RoleValidator {
     }
   }
 
+  //Obtener Datos
   public getDataUser() {
     try {
-      let db = this.afs.doc<User>(`users/${this.dataUser}`).valueChanges();
-      console.log('entra user', db, this.dataUser)
+      let db = this.afs.doc<User>(`users/${this.dataUser}`).snapshotChanges();
       return db;
     } catch (error) {
       this.showError(error);
     }
   }
 
-
   public reauthenticate = (currentPassword) => {
     var user = firebase.auth().currentUser;
-   var credential = firebase.auth.EmailAuthProvider.credential(
+    var credential = firebase.auth.EmailAuthProvider.credential(
       user.email, currentPassword
     );
     return user.reauthenticateWithCredential(credential);
   }
 
+  isEmailVerified(user: User): boolean {
+    return user.emailVerified === true ? true : false;
+  }
 
   //password
   public async updatePass(oldPass: string, newPass: string): Promise<Number> {
@@ -160,7 +157,7 @@ export class AuthService extends RoleValidator {
     let data: number;
     try {
       await this.reauthenticate(oldPass);
-     // await user.updatePassword(newPass);
+      // await user.updatePassword(newPass);
       data = 1;
       console.log(data + "se ha actualizado");
       return data;
@@ -628,3 +625,4 @@ export class AuthService extends RoleValidator {
     toast.present();
   }
 }
+
