@@ -17,7 +17,7 @@ export class AddEstudiantePage implements OnInit {
   private array = [];
 
   estudianteForm = new FormGroup({
-    codigoUnico: new FormControl('', [Validators.required, Validators.minLength(1)]),
+    codigoUnico: new FormControl('', [Validators.required, Validators.maxLength(9)]),
     estudiante: new FormControl('', [Validators.required, Validators.minLength(1)])
   })
 

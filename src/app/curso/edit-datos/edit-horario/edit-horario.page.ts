@@ -56,8 +56,6 @@ export class EditHorarioPage implements OnInit {
   public horarioEditado = [];
 
 
-
-
   //est almacena el id de la materia
   public idMateriaSeleccionada = '';
   //controla que sa seleccionada una materia
@@ -278,7 +276,7 @@ export class EditHorarioPage implements OnInit {
   delHoraDiaLunes(posicionActual) {
     console.log(this.nuevoHorario.length)
     console.log(this.nuevoHorario)
-    if ((this.nuevoHorario.length+this.horarioEditado.length)>1) {
+    if ((this.nuevoHorario.length + this.horarioEditado.length) > 1) {
       if (this.horarioVista[posicionActual]['Lid'] != '') {
         this.borrar(this.horarioVista[posicionActual]['Lid']);
         this.horarioVista[posicionActual]['Lid'] = '';
@@ -297,7 +295,7 @@ export class EditHorarioPage implements OnInit {
   delHoraDiaMartes(posicionActual) {
     console.log(this.nuevoHorario.length)
     console.log(this.nuevoHorario)
-    if ((this.nuevoHorario.length+this.horarioEditado.length)>1) {
+    if ((this.nuevoHorario.length + this.horarioEditado.length) > 1) {
       if (this.horarioVista[posicionActual]['Mid'] != '') {
         this.borrar(this.horarioVista[posicionActual]['Mid']);
         this.horarioVista[posicionActual]['Mid'] = '';
@@ -316,7 +314,7 @@ export class EditHorarioPage implements OnInit {
   delHoraDiaMiercoles(posicionActual) {
     console.log(this.nuevoHorario.length)
     console.log(this.nuevoHorario)
-    if ((this.nuevoHorario.length+this.horarioEditado.length)>1) {
+    if ((this.nuevoHorario.length + this.horarioEditado.length) > 1) {
       if (this.horarioVista[posicionActual]['Miid'] != '') {
         this.borrar(this.horarioVista[posicionActual]['Miid']);
         this.horarioVista[posicionActual]['Miid'] = '';
@@ -335,7 +333,7 @@ export class EditHorarioPage implements OnInit {
   delHoraDiaJueves(posicionActual) {
     console.log(this.nuevoHorario.length)
     console.log(this.nuevoHorario)
-    if ((this.nuevoHorario.length+this.horarioEditado.length)>1) {
+    if ((this.nuevoHorario.length + this.horarioEditado.length) > 1) {
       if (this.horarioVista[posicionActual]['Jid'] != '') {
         this.borrar(this.horarioVista[posicionActual]['Jid']);
         this.horarioVista[posicionActual]['Jid'] = '';
@@ -355,7 +353,7 @@ export class EditHorarioPage implements OnInit {
     console.log(this.nuevoHorario.length)
     console.log(this.nuevoHorario)
 
-    if ((this.nuevoHorario.length+this.horarioEditado.length)>1) {
+    if ((this.nuevoHorario.length + this.horarioEditado.length) > 1) {
 
       if (this.horarioVista[posicionActual]['Vid'] != '') {
         this.borrar(this.horarioVista[posicionActual]['Vid']);
@@ -383,7 +381,7 @@ export class EditHorarioPage implements OnInit {
 
   async guardarNuevoHorario() {
     this.validate = false;
-    if(this.horarioEditado.length>0){
+    if (this.horarioEditado.length > 0) {
       console.log(this.horarioEditado)
       await this.authService.updateHorario(this.horarioEditado, this.idCurso);
     }
