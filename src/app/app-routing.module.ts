@@ -137,6 +137,18 @@ const routes: Routes = [
     path: 'footer',
     loadChildren: () => import('./footer/footer.module').then( m => m.FooterPageModule)
   },
+  {
+    path: 'reportes/:data',
+    loadChildren: () => import('./reporteria/reportes/reportes.module').then( m => m.ReportesPageModule)
+  },
+  {
+    path: 'reporte-general/:data/:dataI/:dataF',
+    loadChildren: () => import('./reporteria/reporte-general/reporte-general.module').then( m => m.ReporteGeneralPageModule)
+  },
+  {
+    path: 'reporte-individual/:data/:dataE/:dataI/:dataF',
+    loadChildren: () => import('./reporteria/reporte-individual/reporte-individual.module').then( m => m.ReporteIndividualPageModule)
+  },
 
 ];
 

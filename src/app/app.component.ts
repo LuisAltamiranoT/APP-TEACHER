@@ -42,7 +42,8 @@ export class AppComponent {
   removeFooter() {
     let title = this.location.prepareExternalUrl(this.location.path());
     title = title.slice(1).split("/")[0];
-    if (title === "home" || title === "login" || title === "register" || title === "send-email" || title === "forgot-password") {
+    if (title === "home" || title === "login" || title === "register" || title === "send-email" || title === "forgot-password"
+    ) {
       return true;
     } else {
       return false;
