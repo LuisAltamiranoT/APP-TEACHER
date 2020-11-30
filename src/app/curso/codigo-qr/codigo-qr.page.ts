@@ -22,9 +22,7 @@ export class CodigoQrPage implements OnInit {
 
   ngOnInit(): void {
     this.dato = this._route.snapshot.paramMap.get('data');
-    console.log(this.dato);
     this.value = this.dato;
-    // this.value = "../../../assets/perfil.jpg"
   }
 
 }

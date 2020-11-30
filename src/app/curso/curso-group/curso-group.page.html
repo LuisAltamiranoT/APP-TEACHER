@@ -9,7 +9,7 @@
         <h3 class="font-weight-normal">
           <mat-icon class="fa-nival" matSuffix>folder_special
           </mat-icon> Mis Clases
-          <a style="float: right; text-decoration: none;" [routerLink]="['/add-curso']">
+          <a style="float: right; text-decoration: none;" [routerLink]="['/curso']">
             <mat-icon class="fa-nival" matSuffix>add_box</mat-icon> Agregar Clase
           </a>
         </h3>
@@ -24,16 +24,15 @@
       <ion-col col-12 col-sm-12>
         <mat-card class="example-card">
           <mat-card-header>
-            <!--   <img mat-card-avatar class="example-header-image" src="{{imgProfesor}}" />-->
             <mat-card-title>{{curso.nombre}}</mat-card-title>
-            <a style="float: right;" (click)="openEditCurso(curso.idCurso)">
+            <a style="float: right;" (click)="openEditCurso(curso.idCursoEdit)">
               <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
             </a>
           </mat-card-header>
           <ion-row>
             <ion-col col-12 col-sm-12>
               <a (click)="openPhoto(curso.image)">
-                <img [src]="curso.image" alt="Imagen curso">
+                <img [src]="curso.image || '../../../assets/icon/clase.jpg'" alt="Imagen curso">
               </a>
             </ion-col>
           </ion-row>

@@ -19,6 +19,7 @@ import { EditAulaPage } from 'src/app/curso/edit-datos/edit-aula/edit-aula.page'
 import { EditHorarioPage } from 'src/app/curso/edit-datos/edit-horario/edit-horario.page';
 import { EditImagePage } from 'src/app/curso/edit-datos/edit-image/edit-image.page';
 import { AddEstudiantePage } from '../add-estudiante/add-estudiante.page';
+import { ViewImagePage } from '../../view-image/view-image.page';
 
 @Component({
   selector: 'app-edit-curso',
@@ -26,28 +27,33 @@ import { AddEstudiantePage } from '../add-estudiante/add-estudiante.page';
   styleUrls: ['./edit-curso.page.scss'],
 })
 export class EditCursoPage implements OnInit {
-
   //manejor de tablas 
-  @ViewChild(MatTable) tabla1: MatTable<Nomina>;
+  @ViewChild(MatTable) tabla1: MatTable<any>;
   //array de la nomina de los estudiantes 
   public nominaVista = [];
-  //contiene el uidMateria
-  public uidMateria = "";
   //contiene el nombre de la materia
   public nombreMateria = "";
+  //amacena el array de informacion de materia 
+  dataMateria;
   //dato que almacenara el id de la materia
   public dataId: any;
   //almacenar nomina del estudiante
+  public idIndexCurso: any;
+
+
   public dataNominaCurso: any;
   //placeholderAula de la aula
   placeholderAula = 'Ejemplo GR1';
   //almacena la imagen del curso
-  photoSelected = '';
+  photoSelected = '../../../assets/icon/clase.jpg';
+
+  idNomina: any;
+  idMateria: any;
+  idCurso: any;
 
 
   private suscripcion1: Subscription;
   private suscripcion2: Subscription;
-  private suscripcion3: Subscription;
 
   editCursoForm = new FormGroup({
     image: new FormControl(''),
@@ -64,80 +70,99 @@ export class EditCursoPage implements OnInit {
 
   ngOnInit(): void {
     this.dataId = this._route.snapshot.paramMap.get('data');
-    this.getCurso(this.dataId);
+    //elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id
+    let splitted = this.dataId.split("//");
+    this.idNomina = splitted[0];
+    this.idMateria = splitted[1];
+    this.idCurso = splitted[2];
+    this.getMateria(this.idMateria);
+    this.getNominaCurso(this.idMateria, this.idNomina);
   }
 
   ngOnDestroy() {
     this.suscripcion1.unsubscribe();
     this.suscripcion2.unsubscribe();
-    this.suscripcion3.unsubscribe();
   }
 
   //CODIGO NUEVO TABLA
-  displayedColumns2: string[] = ['fila', 'codigoUnico', 'nombre', 'opciones'];
-  dataSource2 = new MatTableDataSource(this.nominaVista);
+  displayedColumns2: string[] = ['fila', 'codigoUnico', 'image', 'correo', 'nombre', 'opciones'];
+  dataSource2: any = [];
 
-  getCurso(idCurso: any) {
-    this.suscripcion1 = this.authService.getCursoId(idCurso).subscribe((data) => {
-      let dataCurso: any = [data.payload.data()];
-      this.placeholderAula = dataCurso[0].aula;
-      this.uidMateria = dataCurso[0].uidMateria;
-      this.photoSelected = dataCurso[0].image;
-      this.getMateria(this.uidMateria);
-      this.getNominaCurso(idCurso);
-    });
-
-  }
 
   getMateria(idMateria: any) {
     this.suscripcion2 = this.authService.getMateriaId(idMateria).subscribe((data) => {
-      let dataMateria: any = [data.payload.data()];
-      this.nombreMateria = dataMateria[0].nombre;
+      //dataMateria variable para actualizacion de datos
+      this.dataMateria = [data.payload.data()];
+      let cont = -1;
+      this.nombreMateria = this.dataMateria[0].nombre;
+      console.log('data materia', this.dataMateria);
+      this.dataMateria.forEach(elementCursos => {
+        console.log(elementCursos);
+        elementCursos.cursos.forEach(element => {
+          cont = cont + 1;
+          console.log(element, cont)
+          if (this.idCurso == element.id) {
+            this.idIndexCurso = cont;
+            this.placeholderAula = element.aula,
+              this.photoSelected = element.image
+          }
+          console.log(this.photoSelected, 'asdnjas', element.image);
+        });
+      });
     })
   }
 
-  getNominaCurso(idCurso: any) {
-    this.suscripcion3 = this.authService.getDataCursoId(idCurso).subscribe((data) => {
+
+
+  public getNominaCurso(idMateria: any, idNomina: any) {
+    this.suscripcion1 = this.authService.getDataNominaCursoId(idMateria, idNomina).subscribe((data) => {
       this.nominaVista.length = 0;
-      data.forEach((dataMateria: any) => {
+      const dataNomina: any = data.payload.data();
+      //'codigoUnico','image','correo','nombre'
+      dataNomina.nomina.forEach((dataMateria: any) => {
         this.nominaVista.push({
-          id: dataMateria.payload.doc.id,
-          nombre: dataMateria.payload.doc.data().nombre,
-          codigoUnico: dataMateria.payload.doc.data().codigoUnico,
-          opciones: ''
+          nombre: dataMateria.nombre,
+          codigoUnico: dataMateria.codigoUnico,
+          correo: dataMateria.correo,
+          image: dataMateria.image,
+          uidUser: dataMateria.uidUser,
+          asistencia: dataMateria.asistencia
         })
       });
+      this.dataSource2 = new MatTableDataSource(this.nominaVista);
       this.tabla1.renderRows();
     });
+    console.log(this.nominaVista);
   }
-  /*openAddEstudianteModal() {
-    this.openMaterial(AddEstudianteComponent);
-  }*/
 
-  openDeleteEstudianteModal(idEstudiante: any, nombre: any) {
+  openDeleteEstudianteModal(nombre: any, posicion: any) {
     let data = {
-      idCurso: this.dataId,
-      idEstudiante: idEstudiante,
-      nombre: nombre
+      idMateria: this.idMateria,
+      idNomina: this.idNomina,
+      nombre: nombre,
+      array: this.nominaVista[posicion]
     }
     this.openMaterial1(DeleteEstudiantePage, data);
   }
 
-  openEditEstudianteModal(idEstudiante: any, nombre: any, numeroUnico: any, posicion: number) {
+
+  openEditEstudianteModal(nombre: any, correo: any, codigoUnico: any, posicion: any) {
     let data = {
-      idCurso: this.dataId,
-      idEstudiante: idEstudiante,
-      array: this.nominaVista,
+      idMateria: this.idMateria,
+      idNomina: this.idNomina,
       nombre: nombre,
-      numero: numeroUnico,
-      posicion: posicion
+      numero: codigoUnico,
+      correo: correo,
+      posicion: posicion,
+      array: this.nominaVista,
     }
     this.openMaterial1(EditEstudiantePage, data);
   }
 
   openAddEstudianteModal() {
     let data = {
-      idCurso: this.dataId,
+      idMateria: this.idMateria,
+      idCurso: this.idNomina,
       array: this.nominaVista
     }
     this.openMaterial1(AddEstudiantePage, data);
@@ -145,7 +170,9 @@ export class EditCursoPage implements OnInit {
 
   openEditAulaModal() {
     let data = {
-      idCurso: this.dataId,
+      idMateria: this.idMateria,
+      array: this.dataMateria,
+      index: this.idIndexCurso,
       nombreAula: this.placeholderAula
     }
     this.openMaterial1(EditAulaPage, data);
@@ -154,8 +181,9 @@ export class EditCursoPage implements OnInit {
   openEditHorarioModal() {
     let data = {
       materiaNombre: this.nombreMateria,
-      idMateria: this.uidMateria,
-      idCurso: this.dataId
+      idMateria: this.idMateria,
+      arrayGuardado: this.dataMateria[0].cursos[this.idIndexCurso],
+      arrayCompleto: this.dataMateria,
     }
     this.openMaterial2(EditHorarioPage, data);
   }
@@ -164,7 +192,9 @@ export class EditCursoPage implements OnInit {
     if (this.photoSelected != " ") {
       let data = {
         image: this.photoSelected,
-        idCurso: this.dataId
+        idMateria: this.idMateria,
+        arrayGuardado: this.dataMateria[0].cursos[this.idIndexCurso],
+        arrayCompleto: this.dataMateria,
       }
       this.ventana.open(EditImagePage,
         { width: ' 25rem', data: data }).afterClosed().subscribe(item => {
@@ -172,13 +202,17 @@ export class EditCursoPage implements OnInit {
     } else {
       let data = {
         image: ' ',
-        idCurso: this.dataId
+        idMateria: this.idMateria,
+        arrayGuardado: this.dataMateria[0].cursos[this.idIndexCurso],
+        arrayCompleto: this.dataMateria,
       }
       this.ventana.open(EditImagePage,
         { width: ' 25rem', data: data }).afterClosed().subscribe(item => {
         });
     }
   }
+
+
 
   openMaterial(component: any) {
     this.ventana.open(component,
@@ -190,9 +224,12 @@ export class EditCursoPage implements OnInit {
       { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
       });
   }
+
   openMaterial2(component: any, info: any) {
     this.ventana.open(component,
       { data: info }).afterClosed().subscribe(item => {
+        this.getMateria(this.idMateria);
+        this.getNominaCurso(this.idMateria, this.idNomina);
       });
   }
 
@@ -201,4 +238,18 @@ export class EditCursoPage implements OnInit {
     this.dataSource2.filter = filterValue.trim().toLowerCase();
   }
 
+  openImage(image: any) {
+    if (image != 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680') {
+      this.ventana.open(ViewImagePage,
+        { data: image }).afterClosed().subscribe(item => {
+        });
+    } else {
+      this.authService.showInfo('El estudiante no dispone de una imagen de perfil.');
+    }
+  }
+
+  limpiarBusqueda(input) {
+    input.value = '';
+    this.dataSource2.filter = null;
+  }
 }

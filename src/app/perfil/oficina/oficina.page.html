@@ -5,20 +5,16 @@
   <mat-form-field appearance="standard" class="input-modal">
     <mat-label>Oficina</mat-label>
     <textarea rows="3" matInput placeholder="{{placeholder}}" formControlName="office"></textarea>
+    <mat-icon matSuffix (click)="eraser()">backspace</mat-icon>
   </mat-form-field>
   <ion-grid>
     <ion-row>
-      <ion-col col-12 col-sm-4>
+      <ion-col col-12 col-sm-6>
         <ion-button type="submit" expand="full" size="small" [disabled]="!oficinaForm.valid">
           <ion-icon name="send-sharp"></ion-icon>
         </ion-button>
       </ion-col>
-      <ion-col col-12 col-sm-4>
-        <ion-button (click)="eraser()" color="yellow" expand="full" size="small">
-          <ion-icon name="backspace-sharp"></ion-icon>
-        </ion-button>
-      </ion-col>
-      <ion-col col-12 col-sm-4>
+      <ion-col col-12 col-sm-6>
         <ion-button (click)=" dimissModal()" color="red" expand="full" size="small">
           <ion-icon name="close-sharp"></ion-icon>
         </ion-button>

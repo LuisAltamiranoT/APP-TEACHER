@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 moment.locale('es');
-import * as xlsx from 'xlsx';
+// Libreria para encriptar y desencriptar //
+import * as CryptoJS from 'crypto-js'
 
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/service/auth/auth.service';
 import { Nomina } from '../../shared/models/user.interface';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
-
-import { UploadExcelService } from 'src/app/service/subir-excel/upload-excel.service'
-import { Subscription } from 'rxjs';
+import { ViewImagePage } from '../view-image/view-image.page';
 
 @Component({
   selector: 'app-vista-curso',
@@ -22,187 +23,389 @@ export class VistaCursoPage implements OnInit {
 
   //manejor de tablas 
   @ViewChild(MatTable) tabla1: MatTable<Nomina>;
-
+  public idNomina: any;
+  public idMateria: any;
   //array de la nomina de los estudiantes 
-  public nominaVista: Nomina[] = [];
+  public nominaVista: any[] = [];
   //dato que almacenara el id de la materia
-  public dataId: any;
-  //tomar la informacion de las asistencias
-  public asistencia = [];
+  public dataId: any = '';
   //CODIGO NUEVO TABLA
-  displayedColumns: string[] = ['fila', 'codigoUnico', 'nombre', 'presente', 'atraso', 'falta'];
-  dataSource = new MatTableDataSource(this.nominaVista);
-
+  displayedColumns: string[] = ['fila', 'codigoUnico', 'image', 'nombre', 'presente', 'atraso', 'falta'];
+  dataSource: any = [];
+  //array original de nomina de estudiante
+  private nominaConsulta: any = [];
   //manejar las suscripciones
   private suscripcion1: Subscription;
-
   //manejo de codigo qr
-  public codigoQr = 'kajshdkjahsdkjhaskdhugdyueggdvshfvdgvfsdvfhdvsf';
-
+  public codigoQr = '';
+  //datos del tiempo
   nombre: any;
   fechaActual: any;
   nombreDay: any;
+  hora: any;
+  //estado para agregar
+  estado = 'presente';
+  toggle: any;
+  //estado control
+  estadoControl: boolean = false;
+  //variable para el numero randomico de 6 cifraas
+  codigoDeSeguridad;
+  //variable para el qr
+  idQr: any;
+  NombreMateria: any = '';
+  //variables importantes para la validadcion 
+  numeroAlmacenado: any;
+  historial: any[] = [];
+
+  ////////////////////////////////////////validacion de check
+  ValidateCheckBox = false;
 
   constructor(
     private authService: AuthService,
     public router: Router,
     private _route: ActivatedRoute,
+    public ventana: MatDialog
   ) { }
 
   ngOnInit(): void {
     this.dataId = this._route.snapshot.paramMap.get('data');
-
-    //obtener nomina estudiantes
-    console.log('id de la materia seleccionada', this.dataId);
-    this.obtenerNomina(this.dataId);
-
-    ////////////////////////////
-
-    var f = moment();
-    this.fechaActual = f.format('DD-MM-YYYY'); //fecha actual en string
-
-    var day = moment(this.fechaActual).day();
-
+    console.log(this.dataId)
+    let splitted = this.dataId.split("//");
+    this.idNomina = splitted[0];
+    this.idMateria = splitted[1];
+    this.NombreMateria = splitted[2];
+    // Función para obtener nómina
+    this.obtenerNomina(this.idMateria, this.idNomina);
+    // Función moment
+    let f = moment();
+    // Fecha actual en string
+    this.fechaActual = f.format('DD-MM-YYYY');
+    // Función day
+    var day = moment(f).day();
+    // Obtiene el nombre de día del sistema
     this.nombreDay = moment.weekdays(day).charAt(0).toUpperCase() + moment.weekdays(day).slice(1)
+    // Obtiene la hora del sistema
+    this.hora = moment().format('HH:mm:ss');
+    // Generar código randomico
+    this.generaNss();
+    console.log('randomico', this.codigo_randomico)
   }
 
   ngOnDestroy() {
     this.suscripcion1.unsubscribe();
   }
 
-  /* ****************************************************************************************************
-   *                               PARA LA EXPORTACIÓN DE ARCHIVOS EXCEL
-   * ****************************************************************************************************/
-
-  exportToExcel() {
-    var i = 0;
-    var datosGenerales = [{
-      'N°': i = i + 1,
-      nombre: 'Jenny',
-      apellido: 'Tipan',
-      cedula: '12549565984',
-    },
-    {
-      'N°': i = i + 1,
-      nombre: 'Luis',
-      apellido: 'Altamirano',
-      cedula: '2025698',
-    },
-    ]
-    const wse: xlsx.WorkSheet = xlsx.utils.json_to_sheet(datosGenerales);
-
-    const header = Object.keys(datosGenerales[0]); // columns name
-
-    var wscols = [];
-    for (var i = 0; i < header.length; i++) {  // columns length added
-      wscols.push({ wpx: 125 })
-    }
-    wse["!cols"] = wscols;
-    const wb: xlsx.WorkBook = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(wb, wse, 'Hoja Asistencia');
-
-    xlsx.writeFile(wb, "Hoja Asistencia" + '.xlsx');
+  /** ************************************************** */
+  /**      ENCRIPTACION DE CADENA DE CÓDIGO QR           */
+  /** ************************************************** */
+  EncriptarData(valor) {
+    // variable que almacena los datos a encriptar --- poner los datos a enviar
+    var cadena = valor;
+    // variable que se usa como clave para encriptar
+    var informacion = '2sllmtu2=uTZq@%%jl9w';
+    // encriptar data
+    this.codigoQr = CryptoJS.AES.encrypt(cadena.trim(), informacion.trim()).toString();
   }
 
+  codigo_randomico: any;
+  generaNss() {
+    this.codigo_randomico = '';
+    const characters = 'Dn_S+?Y@hmqy48';
+    const charactersLength = characters.length;
+    for (let i = 0; i < charactersLength; i++) {
+      this.codigo_randomico += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return this.codigo_randomico;
+  }
 
-  /////////////////////////////////////////////////////////////////////////////
-  //funciones utuizadas en esta pagina
-  public obtenerNomina(id) {
-    this.suscripcion1 = this.authService.getDataCursoId(id).subscribe((data) => {
+  public obtenerNomina(idMateria: any, idNomina: any) {
+    this.suscripcion1 = this.authService.getDataNominaCursoId(idMateria, idNomina).subscribe((data) => {
+
+      const dataNomina: any = data.payload.data();
+
+
       this.nominaVista.length = 0;
-      data.forEach((dataMateria: any) => {
-        this.nominaVista.push({
-          id: dataMateria.payload.doc.id,
-          codigoUnico: dataMateria.payload.doc.data().codigoUnico,
-          nombre: dataMateria.payload.doc.data().nombre,
-          presente: false,
-          atraso: false,
-          falta: false
+      this.nominaConsulta.length = 0;
+      this.historial.length = 0;
+      this.numeroAlmacenado = dataNomina.numeroAlmacenado,
+        this.historial = dataNomina.historial,
+
+        console.log('buscar', Number(this.numeroAlmacenado), this.historial.length)
+      console.log('se obtiene', this.numeroAlmacenado, this.historial)
+      console.log('data nomina', dataNomina)
+
+
+      dataNomina.nomina.forEach((dataMateria: any) => {
+        this.idQr = dataNomina.uidProfesor + '//' + dataNomina.uidMateria + '//' + dataNomina.uidCurso + '//' + data.payload.id + '//' + this.codigo_randomico;
+        // Encriptar  QR
+        this.EncriptarData(this.idQr);
+        let ultimoId = dataMateria.asistencia.length - 1;
+
+        //console.log('ultimo index', ultimoId),
+        //console.log('este es el estado anterior', estado)
+        if (ultimoId === -1) {
+          this.nominaVista.push({
+            nombre: dataMateria.nombre,
+            codigoUnico: dataMateria.codigoUnico,
+            correo: dataMateria.correo,
+            image: dataMateria.image,
+            uidUser: dataMateria.uidUser,
+            presente: false,
+            atraso: false,
+            falta: false,
+            estado: true
+          })
+        } else if (dataMateria.asistencia[ultimoId].estado === this.estadoControl) {
+          this.nominaVista.push({
+            nombre: dataMateria.nombre,
+            codigoUnico: dataMateria.codigoUnico,
+            correo: dataMateria.correo,
+            image: dataMateria.image,
+            uidUser: dataMateria.uidUser,
+            presente: false,
+            atraso: false,
+            falta: false,
+            estado: true
+          })
+        } else {
+          console.log('entra al else estado');
+          this.nominaVista.push({
+            nombre: dataMateria.nombre,
+            codigoUnico: dataMateria.codigoUnico,
+            correo: dataMateria.correo,
+            image: dataMateria.image,
+            uidUser: dataMateria.uidUser,
+            presente: dataMateria.asistencia[ultimoId].presente,
+            atraso: dataMateria.asistencia[ultimoId].atraso,
+            falta: dataMateria.asistencia[ultimoId].falta,
+            estado: true
+          })
+        }
+
+        this.dataSource = new MatTableDataSource(this.nominaVista);
+        this.tabla1.renderRows();
+
+        this.nominaConsulta.push({
+          nombre: dataMateria.nombre,
+          codigoUnico: dataMateria.codigoUnico,
+          correo: dataMateria.correo,
+          image: dataMateria.image,
+          uidUser: dataMateria.uidUser,
+          asistencia: dataMateria.asistencia
         })
       });
-      this.tabla1.renderRows();
     });
+    console.log('nominaConsulta', this.nominaConsulta);
   }
 
-  public generarConsultaActualziacionTabla() {
-
-  }
-
-  showOptionsPresente(event, dato: any, idEstudiante: any) {
+  showOptionsPresente(event, dato: any) {
+    //this.ValidateCheckBox = true;
     this.nominaVista[dato].presente = true;
     this.nominaVista[dato].atraso = false;
     this.nominaVista[dato].falta = false;
     try {
-      let data = {
-        estudiante: idEstudiante,
-        fecha: this.fechaActual,
-        presente: true
-      }
-      let consulta = this.authService.createAsistencia(this.dataId, data);
-      if (consulta) {
-        this.authService.showSuccess('EL dato ha sido registrado');
-        this.getAsistencia();
-      }
+      let presente = true;
+      let atraso = false;
+      let falta = false;
+      this.almacenarNomina(dato, presente, atraso, falta);
+      //dato es el index del array
     } catch (error) {
       this.authService.showError(error);
     }
   }
 
-  showOptionsAtraso(event, dato: any, idEstudiante: any) {
+  showOptionsAtraso(event, dato: any) {
+    //this.ValidateCheckBox = true;
     this.nominaVista[dato].presente = false;
     this.nominaVista[dato].atraso = true;
     this.nominaVista[dato].falta = false;
+
     try {
-      let data = {
-        estudiante: idEstudiante,
-        fecha: this.fechaActual,
-        atraso: true
-      }
-      let consulta = this.authService.createAsistencia(this.dataId, data);
-      if (consulta) {
-        this.authService.showSuccess('EL dato ha sido registrado');
-      }
+      let presente = false;
+      let atraso = true;
+      let falta = false;
+      this.almacenarNomina(dato, presente, atraso, falta);
     } catch (error) {
       this.authService.showError(error);
     }
   }
 
-  showOptionsFalta(event, dato: any, idEstudiante: any) {
+  showOptionsFalta(event, dato: any) {
+    //this.ValidateCheckBox = true;
     this.nominaVista[dato].presente = false;
     this.nominaVista[dato].atraso = false;
     this.nominaVista[dato].falta = true;
     try {
-      let data = {
-        estudiante: idEstudiante,
-        fecha: this.fechaActual,
-        falta: true
-      }
-      let consulta = this.authService.createAsistencia(this.dataId, data);
-      if (consulta) {
-        this.authService.showSuccess('EL dato ha sido registrado');
-      }
+      let presente = false;
+      let atraso = false;
+      let falta = true;
+      this.almacenarNomina(dato, presente, atraso, falta);
     } catch (error) {
       this.authService.showError(error);
     }
   }
 
-  getAsistencia() {
-    this.asistencia = [];
-    console.log(this.dataId, this.fechaActual);
-    this.authService.getDataAsistencia(this.dataId, this.fechaActual).subscribe((data) => {
-      data.forEach((dataMateria: any) => {
-        this.asistencia.push({
-          id: dataMateria.payload.doc.id,
-          data: dataMateria.payload.doc.data()
-        })
+  almacenarNomina(indexArray, presente, atraso, falta) {
+
+    let tamañoArrayAsistencia = this.nominaConsulta[indexArray].asistencia.length - 1;
+
+    if (tamañoArrayAsistencia === -1) {
+
+      this.agregarArray(indexArray, presente, atraso, falta, true);
+
+    } else if (this.nominaConsulta[indexArray].asistencia[tamañoArrayAsistencia].estado === this.estadoControl) {
+
+      this.agregarArray(indexArray, presente, atraso, falta, true);
+
+    } else {
+      this.agregarArrayReemplazar(indexArray, presente, atraso, falta, tamañoArrayAsistencia, false);
+    }
+
+  }
+
+  agregarArrayReemplazar(indexArray, presente, atraso, falta, ultimoId, estado) {
+    this.nominaConsulta[indexArray].asistencia[ultimoId].presente = presente
+    this.nominaConsulta[indexArray].asistencia[ultimoId].atraso = atraso
+    this.nominaConsulta[indexArray].asistencia[ultimoId].falta = falta
+    this.nominaConsulta[indexArray].asistencia[ultimoId].estado = estado
+    console.log(this.nominaConsulta);
+  }
+
+
+
+  almacenarNominaFinalizado() {
+    //if (this.ValidateCheckBox == true) {
+      let cont = -1;
+      this.estado = 'presente';
+      this.nominaConsulta.forEach(elementCurso => {
+        cont = cont + 1;
+        //console.log('se imprime', elementCurso.asistencia.length);
+        let ultimoId = elementCurso.asistencia.length - 1;
+        if (ultimoId === -1) {
+          this.agregarArray(cont, false, false, true, false);
+        } else if (elementCurso.asistencia[ultimoId].estado === this.estadoControl) {
+          this.agregarArray(cont, false, false, true, false);
+        } else {
+          this.agregarArrayReemplazar(cont, elementCurso.asistencia[ultimoId].presente, elementCurso.asistencia[ultimoId].atraso, elementCurso.asistencia[ultimoId].falta, ultimoId, false);
+        }
       });
-    });
-    console.log(this.asistencia);
+      this.agregarArrayFinalizado();
+      this.activarOpciones = false;
+   /* } else {
+      this.authService.showInfo('No hay registros de asitencia para guardar');
+      this.activarOpciones = false;
+    }*/
+  }
+
+
+  async agregarArray(indexArray, presente, atraso, falta, estado) {
+    // console.log('datos que se insertaran', indexArray, this.nominaConsulta[indexArray].asistencia)
+    await this.nominaConsulta[indexArray].asistencia.push({
+      fecha: this.fechaActual,
+      dia: this.nombreDay,
+      presente: presente,
+      atraso: atraso,
+      falta: falta,
+      estado: estado,
+    })
+  }
+
+  async agregarArrayFinalizado() {
+    console.log('esta en agregar finalizado', Number(this.numeroAlmacenado), this.historial.length)
+    let nuevoHistorial: any;
+    nuevoHistorial = this.historial.slice();
+    console.log('datos del array historial', this.historial);
+
+    if (Number(this.numeroAlmacenado) == this.historial.length) {
+      nuevoHistorial.push(this.nombreDay + '//' + this.fechaActual);
+      console.log('entro al if', nuevoHistorial);
+      this.numeroAlmacenado = '' + (Number(this.numeroAlmacenado) + 1);
+    } else if (this.historial.length > Number(this.numeroAlmacenado)) {
+      this.numeroAlmacenado = '' + (Number(this.numeroAlmacenado) + 1);
+    }
+
+    console.log('esto se almacenara', this.numeroAlmacenado, nuevoHistorial)
+
+    let data = this.authService.updateNomina(this.idNomina, this.idMateria, this.nominaConsulta, 'presente', '0', this.numeroAlmacenado, nuevoHistorial);//aqui se envia el desactivamiento del cdigo
+    if (data) {
+      this.obtenerNomina(this.idMateria, this.idNomina);
+      this.estado = 'presente';
+      this.estadoControl = false;
+      this.toggle = false;
+    }
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  limpiarBusqueda(input) {
+    input.value = '';
+    this.dataSource.filter = null;
+  }
+
+  openPhoto(image: any) {
+    if (image != 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680') {
+      this.ventana.open(ViewImagePage,
+        { width: ' 25rem', data: image }).afterClosed().subscribe(item => {
+        });
+    } else {
+      this.authService.showInfo('El estudiante no dispone de una imagen de perfil');
+    }
+  }
+
+  onReportes() {
+    this.router.navigate(['reportes', this.dataId])
+    this.activarOpciones = false;
+  }
+
+  changeState() {
+    if (this.estado === 'presente') {
+      this.estado = 'atraso';
+    } else {
+      this.estado = 'presente';
+    }
+    console.log(this.estado);
+    this.authService.updateNominaEstado(this.idNomina, this.idMateria, this.estado);
+    this.toggle = !this.toggle;
+    this.activarOpciones = false;
+  }
+
+  changeBack() {
+    this.estadoControl = !this.estadoControl;
+    this.obtenerNomina(this.idMateria, this.idNomina);
+    this.activarOpciones = false;
+    console.log('estado contorl', this.estadoControl)
+  }
+
+
+  QR() {
+    let nuevoHistorial: any;
+    nuevoHistorial = this.historial.slice();
+
+    if (Number(this.numeroAlmacenado) == this.historial.length) {
+      nuevoHistorial.push(this.nombreDay + '//' + this.fechaActual);
+    } else {
+
+    }
+    console.log('esto se va a guardar', nuevoHistorial);
+    console.log(this.numeroAlmacenado);
+
+    this.codigoDeSeguridad = this.codigo_randomico;
+    this.authService.updateNominaEstadoQR(this.idNomina, this.idMateria, this.estado, this.codigoDeSeguridad, nuevoHistorial);
+    this.obtenerNomina(this.idMateria, this.idNomina);
+    this.activarOpciones = false;
+  }
+
+  activarOpciones: boolean = false;
+  verOpciones() {
+    if (this.activarOpciones === true) {
+      this.activarOpciones = false;
+    }
+    else {
+      this.activarOpciones = true;
+    }
   }
 
 }

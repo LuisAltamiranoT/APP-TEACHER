@@ -3,23 +3,26 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { AuthService } from 'src/app/service/auth/auth.service';
+import { PerfilPage } from '../perfil/perfil.page';
 
 @Component({
   selector: 'app-editar-materia',
   templateUrl: './editar-materia.page.html',
   styleUrls: ['./editar-materia.page.scss'],
 })
+
 export class EditarMateriaPage implements OnInit {
 
   validate = true;
   materias = [];
+  content = [];
   idData: any;
+  mensaje = '';
 
   placeholder = "";
-  mensaje = "";
 
   materiaForm = new FormGroup({
-    materia: new FormControl('', [Validators.required, Validators.minLength(1), this.match()])
+    materia: new FormControl('', [Validators.required, Validators.minLength(3), this.match()])
   })
 
   constructor(
@@ -29,45 +32,43 @@ export class EditarMateriaPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    /**
+     *nombre: nombre,
+      id: idMateria,
+      array: this.materias
+     */
+
     this.placeholder = this.infoUser.nombre;
-    this.materias = this.infoUser.array;
+    this.content = this.infoUser.array;
     this.idData = this.infoUser.id;
     this.materiaForm.patchValue({ materia: this.infoUser.nombre });
+
+    this.createArray();
+
   }
 
-  async onClick() {
+  createArray() {
+    this.content.forEach((dataMateria: any) => {
+      this.materias.push(
+        dataMateria.data.nombre.toUpperCase()
+      );
+      console.log(this.materias);
+    })
+  }
+
+  onClick() {
     try {
-      let permiso = 0;
       this.validate = false;
       const { materia } = this.materiaForm.value;
 
-      for (let i = 0; i < this.materias.length; i++) {
-        if (this.materias[i].data.nombre != materia) {
-          permiso = 1;
-          //console.log(permiso+" -> if for")
-        } else {
-          permiso = 0;
-          //console.log(permiso +" -> else for termina")
-          this.validate = true;
-          this.authService.showError("La materia " + materia + " ya se encuentra registrada");
-          break;
-        }
-      }
-      if (permiso != 0) {
-        //console.log(permiso +" se guarda")
-        const dat = await this.authService.updateMateria(this.idData, materia);
-        if (dat) {
-          this.authService.showUpdatedata();
-          this.dialogRef.close();
-          this.validate = true;
-        }
-        if (!dat) {
-          this.validate = true;
-        }
+      let dat = this.authService.updateMateria(this.idData, materia);
+      /////////documentId: string, data: any                       
+      if (dat) {
+        this.dialogRef.close();
+        this.validate = true;
       } else {
-        //console.log(permiso +" no se guarda")
+        this.validate = true;
       }
-
     } catch (error) {
       console.log(error);
     }
@@ -81,19 +82,13 @@ export class EditarMateriaPage implements OnInit {
     this.materiaForm.patchValue({ materia: "" });
   }
 
-  //validar informacion
+  //validar dos nombres
   match() {
     return (control: AbstractControl): { [s: string]: boolean } => {
       if (control.parent) {
         let data = control.value;
-        //console.log(data);
-        //console.log(long)
-        if (data === this.placeholder) {
-          return {
-            match: true
-          };
-        } else if (data === undefined) {
-          this.mensaje = 'Debe ingresar materia';
+        if (this.materias.includes(data.toUpperCase())) {
+          this.mensaje = 'Esta materia ya exite en tu lista';
           return {
             match: true
           };
@@ -104,5 +99,6 @@ export class EditarMateriaPage implements OnInit {
     };
   }
 
-
 }
+
+

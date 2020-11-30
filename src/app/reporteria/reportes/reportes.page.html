@@ -8,106 +8,108 @@
     <ion-row>
       <ion-col size="12">
         <h3 class="font-weight-normal">
-          <mat-icon class="fa-nival" matSuffix>description</mat-icon> Reporte de Asistencia
+          <mat-icon class="fa-nival" matSuffix>list_alt</mat-icon> Reportes
+          <hr class="hr-nival">
         </h3>
-      </ion-col>
-      <ion-col size="12">
+        <button mat-button style="display: inline;" (click)="exportToExcel()" [disabled]="!ValidateButton">
+          <mat-icon class="fa-nival" matSuffix>
+            get_app
+          </mat-icon>
+          Descargar
+        </button>
+        <button mat-button style="display: inline; float: right;" (click)="verFiltros()" [disabled]="!ValidateButton">
+          <mat-icon class="fa-nival" matSuffix>
+            filter_list
+          </mat-icon>
+          Filtros
+        </button>
         <hr class="hr-nival">
       </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col size="12">
-        <h4 class="font-weight-normal">
-          <mat-checkbox [checked]="activar" (change)="presentarCalendario($event.checked)" class="fa-nival">
-          </mat-checkbox>
-          <ion-icon name="filter-outline" class="fa-nival" style="padding-left: 4px;"></ion-icon>
-          Periodo de Asistencia:
-        </h4>
-      </ion-col>
-      <ion-col size="12">
-        <h4 class="font-weight-normal">
-          <a class="float-right" style="text-decoration: none;"
-            [routerLink]="['/reporte-general', dataId, fecha_inicio, fecha_fin]">
-            <ion-icon name="document-outline" class="pr-1 fa-nival"></ion-icon>Ver Reporte General
-          </a>
-        </h4>
-      </ion-col>
-      <ion-col size="12" *ngIf="verCalendario">
-        <form [formGroup]="anioForm">
+        <form [formGroup]="fechaForm" (ngSubmit)="filtrar()" style="display: inline;" *ngIf="activarFiltros">
           <ion-row>
             <ion-col size="6">
-              <mat-form-field class="input-modal">
+              <button mat-button [disabled]="!limpiarInput" (click)="limpiarBusqueda(input)">
+                <mat-icon>
+                  search
+                </mat-icon>
+                Buscar
+              </button>
+            </ion-col>
+            <ion-col size="6">
+              <button mat-button [disabled]="!limpiarInput" (click)="limpiarImput()" style="float: right;">
+                <mat-icon matSuffix>backspace</mat-icon>
+                Limpiar
+              </button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <mat-form-field appearance="standard" class="input-modal">
                 <mat-label>Inicio</mat-label>
                 <input autocomplete="off" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker"
-                  formControlName="inicio" readonly>
+                  formControlName="inicio" readonly (dateInput)="activarBusqueda()">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
             </ion-col>
             <ion-col size="6">
-              <mat-form-field class="input-modal">
+              <mat-form-field appearance="standard" class="input-modal">
                 <mat-label>Final</mat-label>
                 <input autocomplete="off" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker1"
-                  formControlName="fin" readonly (dateInput)="validarFecha($event, anioForm.value )">
+                  formControlName="fin" readonly (dateInput)="validarFecha($event, fechaForm.value)">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
               </mat-form-field>
             </ion-col>
           </ion-row>
         </form>
+        <mat-form-field appearance="standard" class="input-modal">
+          <mat-label>Buscar</mat-label>
+          <input matInput autocomplete="off" (keyup)="applyFilter($event)" placeholder="Ejemplo 201720 o Pepito Perez"
+            #input>
+          <mat-icon matSuffix (click)="limpiarBusqueda(input)">backspace</mat-icon>
+        </mat-form-field>
       </ion-col>
       <ion-col size="12">
         <div class="example-container mat-elevation-z3">
-          <mat-form-field class="busqueda1">
-            <mat-label>Buscar</mat-label>
-            <input matInput autocomplete="off" (keyup)="applyFilter($event)" placeholder="Ejemplo 201720 o Pepito Perez"
-              #input>
-          </mat-form-field>
-          <table mat-table [dataSource]="dataSource" #tabla1>
+          <table mat-table [dataSource]="dataSource" #table>
+            <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" [ngSwitch]="disCol"
+              matColumnDef="{{disCol}}" [sticky]="isSticky(disCol)">
+              <th mat-header-cell *matHeaderCellDef>{{disCol}}</th>
 
-            <!-- Numero de fila -->
-            <ng-container matColumnDef="fila">
-              <th mat-header-cell *matHeaderCellDef> N° </th>
-              <td mat-cell *matCellDef="let element ,let i = index;"> {{i+1}}
-              </td>
+              <ng-container *ngSwitchCase="'Numero'">
+                <td class="number" mat-cell *matCellDef="let element "> {{element[disCol]}}</td>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'Nombre'">
+                <td mat-cell *matCellDef="let element "> {{element[disCol]}}</td>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'Imagen'">
+                <td mat-cell *matCellDef="let element, let i = index;">
+                  <a (click)="openPhoto(element[disCol])">
+                    <img mat-card-image class="avatarNivalStudent" src={{element[disCol]}} alt="noImage">
+                  </a>
+                </td>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'Porcentaje'">
+                <td mat-cell *matCellDef="let element">{{element[disCol]}}</td>
+              </ng-container>
+
+              <ng-container *ngSwitchDefault>
+                <td mat-cell *matCellDef="let element,let i = index;">
+                  <button mat-button [ngStyle]="{'backgroundColor':getColor(element[disCol])}"
+                    style="color: white; width: 100px; margin-left: 3px;"
+                    (click)="onclick(element[disCol],element['Numero'],disCol)">{{element[disCol]}}</button>
+                </td>
+              </ng-container>
             </ng-container>
-
-            <!-- Position Column -->
-            <ng-container matColumnDef="codigoUnico">
-              <th mat-header-cell *matHeaderCellDef> Codigo único </th>
-              <td mat-cell *matCellDef="let element"> {{element.codigoUnico}}
-              </td>
-            </ng-container>
-
-            <!-- Name Column -->
-            <ng-container matColumnDef="nombre">
-              <th mat-header-cell *matHeaderCellDef> Nombre </th>
-              <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
-
-                <h4 style="text-align: left;">
-                  <p class="rounded p-1 mt-2">
-                    {{element.nombre}}
-                  </p>
-                </h4>
-              </td>
-            </ng-container>
-
-            <!-- Weight Column -->
-            <ng-container matColumnDef="reporte">
-              <th mat-header-cell *matHeaderCellDef> Generar Reporte </th>
-              <td class="px-1" mat-cell *matCellDef="let element, let p = index;">
-                <a class="text-center"
-                  [routerLink]="['/reporte-individual', dataId, element.nombre, fecha_inicio, fecha_fin]">
-                  <mat-icon class="pr-1 fa-nival">insert_drive_file</mat-icon>
-                </a>
-              </td>
-            </ng-container>
-
-            <!-- Symbol Column -->
-            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-            <tr class="mat-row" *matNoDataRow>
-              <td class="mat-cell" colspan="5">No se ha encontrado: "{{input.value}}"</td>
-            </tr>
           </table>
         </div>
       </ion-col>

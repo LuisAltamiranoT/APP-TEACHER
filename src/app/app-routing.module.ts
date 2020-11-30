@@ -70,7 +70,7 @@ const routes: Routes = [
     canActivate: [GuardGuard]
   },
   {
-    path: 'add-curso',
+    path: 'curso',
     loadChildren: () => import('./curso/add-curso/add-curso.module').then(m => m.AddCursoPageModule)
   },
   {
@@ -114,7 +114,7 @@ const routes: Routes = [
     loadChildren: () => import('./curso/view-image/view-image.module').then(m => m.ViewImagePageModule)
   },
   {
-    path: 'codigo-qr/:data',
+    path: 'codigo/:data',
     loadChildren: () => import('./curso/codigo-qr/codigo-qr.module').then(m => m.CodigoQrPageModule)
   },
   {
@@ -142,12 +142,12 @@ const routes: Routes = [
     loadChildren: () => import('./reporteria/reportes/reportes.module').then( m => m.ReportesPageModule)
   },
   {
-    path: 'reporte-general/:data/:dataI/:dataF',
-    loadChildren: () => import('./reporteria/reporte-general/reporte-general.module').then( m => m.ReporteGeneralPageModule)
+    path: 'reporte-individual',
+    loadChildren: () => import('./reporteria/reporte-individual/reporte-individual.module').then( m => m.ReporteIndividualPageModule)
   },
   {
-    path: 'reporte-individual/:data/:dataE/:dataI/:dataF',
-    loadChildren: () => import('./reporteria/reporte-individual/reporte-individual.module').then( m => m.ReporteIndividualPageModule)
+    path: 'eliminar-curso',
+    loadChildren: () => import('./perfil/eliminar-curso/eliminar-curso.module').then( m => m.EliminarCursoPageModule)
   },
 
 ];

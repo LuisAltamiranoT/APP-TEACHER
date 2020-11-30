@@ -15,16 +15,16 @@ export class OficinaPage implements OnInit {
 
   validate = true;
 
-  placeholder = "Dinos donde localizarte";
+  placeholder = "Dinos donde localizarte"
+
   mensaje = "";
 
   oficinaForm = new FormGroup({
     office: new FormControl('', this.match())
   })
 
-
   constructor(
-    public dialogRef: MatDialogRef<InfoPage>,
+    public dialogRef: MatDialogRef<OficinaPage>,
     @Inject(MAT_DIALOG_DATA) public infoUser: any,
     private authService: AuthService,
   ) { }
@@ -40,11 +40,9 @@ export class OficinaPage implements OnInit {
       const { office } = this.oficinaForm.value;
       const dat = await this.authService.updateOficina(office);
       if (dat) {
-        this.authService.showUpdatedata();
         this.dialogRef.close();
-      }
-      if (!dat) {
-        this.validate = true;
+      }else{
+        this.validate=true;
       }
     } catch (error) {
       this.authService.showError(error);
@@ -54,6 +52,7 @@ export class OficinaPage implements OnInit {
   eraser() {
     this.oficinaForm.patchValue({ office: "" });
   }
+
 
   dimissModal() {
     this.dialogRef.close();
@@ -76,5 +75,4 @@ export class OficinaPage implements OnInit {
       return null;
     };
   }
-
 }

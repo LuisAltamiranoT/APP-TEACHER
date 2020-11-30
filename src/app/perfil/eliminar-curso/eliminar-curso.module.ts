@@ -9,34 +9,26 @@ import { MatIconModule } from '@angular/material/icon';
 //modal
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ReporteGeneralPageRoutingModule } from './reporte-general-routing.module';
+import { EliminarCursoPageRoutingModule } from './eliminar-curso-routing.module';
 
-import { ReporteGeneralPage } from './reporte-general.page';
+import { EliminarCursoPage } from './eliminar-curso.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ReporteGeneralPageRoutingModule,
+    EliminarCursoPageRoutingModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatDialogModule,
-    MatButtonModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
+    MatButtonModule
   ],
-  declarations: [ReporteGeneralPage]
+  declarations: [EliminarCursoPage]
 })
-export class ReporteGeneralPageModule {}
+export class EliminarCursoPageModule {}

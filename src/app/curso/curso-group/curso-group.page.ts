@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/service/auth/auth.service';
-
-import { ViewImagePage } from 'src/app/curso/view-image/view-image.page';
 import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
+import { AuthService } from 'src/app/service/auth/auth.service';
+import { ViewImagePage } from 'src/app/curso/view-image/view-image.page';
 
 @Component({
   selector: 'app-curso-group',
   templateUrl: './curso-group.page.html',
   styleUrls: ['./curso-group.page.scss'],
 })
+
 export class CursoGroupPage implements OnInit {
 
   //informacion de los cursos guardados en el sistema
@@ -21,12 +22,13 @@ export class CursoGroupPage implements OnInit {
   public curso = [];
   //carga horario guardado
   public cursosGuardados = [];
+  //controla imagen de fondo
+  public stateImage: boolean = false;
   //colores para cada materia
   private color = ['DARKSLATEGRAY', 'CADETBLUE', 'CORAL', 'FIREBRICK', 'TEAL', 'INDIANRED', 'DARKSLATEBLUE', 'SEAGREEN', 'BROWN', 'LIGHTSLATEGRAY'];
 
-  validate: boolean = true;
-  width = 20;
-  imgProfesor = 'https://material.angular.io/assets/img/examples/shiba1.jpg';
+  //control de suscripciones
+  private suscripcion1: Subscription;
 
   constructor(
     public router: Router,
@@ -38,8 +40,12 @@ export class CursoGroupPage implements OnInit {
     this.getMateria();
   }
 
+  ngOnDestroy() {
+    this.suscripcion1.unsubscribe();
+  }
+
   getMateria() {
-    this.authService.getDataMateria().subscribe((data) => {
+    this.suscripcion1 = this.authService.getDataMateria().subscribe((data) => {
       this.materias.length = 0;
       data.forEach((dataMateria: any) => {
         this.materias.push({
@@ -47,42 +53,33 @@ export class CursoGroupPage implements OnInit {
           data: dataMateria.payload.doc.data()
         });
       })
-    });
-
-    this.authService.getDataCurso().subscribe((data) => {
-      this.curso.length = 0;
-      data.forEach((dataMateria: any) => {
-        this.curso.push({
-          id: dataMateria.payload.doc.id,
-          data: dataMateria.payload.doc.data()
-        })
-      });
       this.replaceCursos();
     });
   }
 
 
+
   replaceCursos() {
     this.cursoVista.length = 0;
-    console.log('Se ejecuta el replace');
-    let cont = 0;
-    this.materias.forEach(element => {
-      this.curso.forEach(elementCurso => {
-        if (element.id === elementCurso.data.uidMateria) {
-          if (cont < this.color.length - 1) {
-            cont = cont + 1
-          } else {
-            cont = 0;
-          }
-          this.cursoVista.push({
-            idCurso: elementCurso.id,
-            nombre: element.data.nombre + ' - ' + elementCurso.data.aula,
-            image: elementCurso.data.image,
-            color: this.color[cont]
-          });
-          console.log('datos_cursos', this.cursoVista);
-        }
+    this.materias.forEach(elementMateria => {
+      elementMateria.data.cursos.forEach(elementCurso => {
+        //console.log(elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id);
+        let idCurso = elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementMateria.data.nombre + ' ' + elementCurso.aula;
+        this.cursoVista.push({
+          idCursoEdit: elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementCurso.id,
+          idCurso: idCurso,
+          nombre: elementMateria.data.nombre + ' ' + elementCurso.aula,
+          image: elementCurso.image
+        })
+        console.log('carga de datos', this.cursoVista, this.materias);
       });
+      console.log('tamñano del curso', this.cursoVista.length);
+      if (this.cursoVista.length != 0) {
+        this.stateImage = false;
+      } else {
+        this.stateImage = true;
+      }
+
     });
   }
 
@@ -97,12 +94,11 @@ export class CursoGroupPage implements OnInit {
   openPhoto(image: any) {
     if (image != '') {
       this.ventana.open(ViewImagePage,
-        { width: '25rem', data: image }).afterClosed().subscribe(item => {
+        { data: image }).afterClosed().subscribe(item => {
         });
     } else {
       this.authService.showInfo('El curso no dispone de una imagen');
     }
   }
-
 
 }

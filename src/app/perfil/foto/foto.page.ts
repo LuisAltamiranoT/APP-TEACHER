@@ -45,7 +45,12 @@ export class FotoPage implements OnInit {
 
   ngOnInit(): void {
 
-    this.photoSelected = '../../../assets/icon/aqui.jpg';
+    /*
+    data: this.perfil,
+        array:this.materias
+     */
+
+    this.photoSelected = '../../../assets/aqui.jpg';
 
     this.stateImage = this.authService.finalizoImage$.subscribe(() => {
       this.dimissModal();
@@ -54,6 +59,7 @@ export class FotoPage implements OnInit {
   ngOnDestroy() {
     this.stateImage.unsubscribe();
   }
+
 
   onPhotoSelected(event: HtmlInputEvent): void {
     if (event.target.files && event.target.files[0]) {
@@ -84,19 +90,22 @@ export class FotoPage implements OnInit {
 
   addFoto() {
     this.validate = false;
-    if (this.validImage && this.infoUser === 'no-image') {
-      let data = this.uploadImage.preAddAndUpdatePerfil(this.file);
+    if (this.validImage && this.infoUser.data === 'no-image') {
+      let data = this.uploadImage.preAddAndUpdatePerfil(this.file, this.infoUser.array);
     } else {
-      let data = this.uploadImage.preAddAndUpdatePerfil(this.file);
-      this.uploadImage.deleteImagePerfil(this.infoUser);
+      let data = this.uploadImage.preAddAndUpdatePerfil(this.file, this.infoUser.array);
+      this.uploadImage.deleteImagePerfil(this.infoUser.data);
     }
   }
+
+
 
   dimissModal() {
     this.validate = true;
     this.authService.showSuccess('La información se ha actualizado');
     this.dialogRef.close();
   }
+
 
   closeModal() {
     this.dialogRef.close();

@@ -23,7 +23,7 @@
                         </a>
                     </h2>
                     <div class="text-center">
-                        <img [src]="photoSelected" fallimg class="img-fluid">
+                        <img [src]="photoSelected || '../../../assets/icon/clase.jpg'" fallimg class="img-fluid">
                     </div>
                 </div>
             </ion-col>
@@ -95,6 +95,7 @@
                                 <mat-label>Buscar</mat-label>
                                 <input matInput autocomplete="off" (keyup)="applyFilter($event)"
                                     placeholder="Ejemplo 201720 o Pepito Perez" #input>
+                                <mat-icon matSuffix (click)="limpiarBusqueda(input)">backspace</mat-icon>
                             </mat-form-field>
                         </ion-col>
                     </ion-row>
@@ -117,27 +118,47 @@
                                     </ng-container>
 
                                     <!-- Name Column -->
+                                    <ng-container matColumnDef="image">
+                                        <th mat-header-cell *matHeaderCellDef> Imagen </th>
+                                        <td class="px-1" mat-cell *matCellDef="let element, let i = index;">
+                                            <a (click)='openImage(element.image)'>
+                                                <img mat-card-image class="avatarNivalStudent" src={{element.image}}
+                                                    alt="noImage">
+                                            </a>
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Name Column -->
                                     <ng-container matColumnDef="nombre">
                                         <th mat-header-cell *matHeaderCellDef> Nombre </th>
                                         <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
-                                            <h4 class="p-1 mt-2" style="text-align: left;">
+                                            <p class=" rounded p-1 mt-2">
                                                 {{element.nombre}}
-                                            </h4>
+                                            </p>
                                         </td>
                                     </ng-container>
+
+                                    <!-- Name Column -->
+                                    <ng-container matColumnDef="correo">
+                                        <th mat-header-cell *matHeaderCellDef> Email </th>
+                                        <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
+                                            <p class="rounded p-1 mt-2" style="text-align: left;">
+                                                {{element.correo}}
+                                            </p>
+                                        </td>
+                                    </ng-container>
+
                                     <ng-container matColumnDef="opciones">
                                         <th mat-header-cell *matHeaderCellDef> Opciones </th>
                                         <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
                                             <a class="text-info p-1"
-                                                (click)="openEditEstudianteModal(element.id,element.nombre,element.codigoUnico,l)">
+                                                (click)="openEditEstudianteModal(element.nombre,element.correo,element.codigoUnico,l)">
                                                 <ion-icon class="fa-nival" style="font-size: 20px;"
-                                                    name="create-outline">
-                                                </ion-icon>
+                                                    name="create-outline"></ion-icon>
                                             </a>
                                             <a class="text-danger p-1"
-                                                (click)=" openDeleteEstudianteModal(element.id,element.nombre)">
-                                                <mat-icon class="fa-nival" style="color: red; font-size: 20px;"
-                                                    matSuffix>delete_forever
+                                                (click)=" openDeleteEstudianteModal(element.nombre,l)">
+                                                <mat-icon class="fa-nival" style="color: red;" matSuffix>delete_forever
                                                 </mat-icon>
                                             </a>
                                         </td>

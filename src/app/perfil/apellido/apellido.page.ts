@@ -11,11 +11,10 @@ import { AuthService } from 'src/app/service/auth/auth.service';
 })
 
 export class ApellidoPage implements OnInit {
-
   validate = true;
   mensaje = '';
 
-  placeholder = "Ingresa tus apellidos"
+  placeholder = "Ingresa tus apellidos";
 
   apellidoForm = new FormGroup({
     lastName: new FormControl('', [Validators.required, Validators.minLength(4), this.match()])
@@ -28,28 +27,27 @@ export class ApellidoPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    /*nombre:this.nombre,
+      apellido:this.apellido,
+      arrayMaterias:this.materias */
     if (this.infoUser == "") {
+
     } else {
-      this.apellidoForm.patchValue({ lastName: this.infoUser });
-      this.placeholder = this.infoUser;
+      this.apellidoForm.patchValue({ lastName: this.infoUser.apellido });
+      this.placeholder = this.infoUser.apellido;
     }
   }
 
   async onClick() {
     try {
       this.validate = false;
+      this.mensaje = '';
       const { lastName } = this.apellidoForm.value;
-      if (lastName != "") {
-        const dat = await this.authService.updateLastName(lastName);
-        if (dat) {
-          this.authService.showUpdatedata();
-          this.dialogRef.close();
-        }
-        if (!dat) {
-          this.validate = true;
-        }
+      this.updateMateria(lastName);
+      const dat = await this.authService.updateLastName(lastName);
+      if (dat) {
+        this.dialogRef.close();
       } else {
-        this.authService.showError("Este campo es obligatorio");
         this.validate = true;
       }
     } catch (error) {
@@ -57,9 +55,24 @@ export class ApellidoPage implements OnInit {
     }
   }
 
+  /*nombre:this.nombre,
+        apellido:this.apellido,
+        arrayMaterias:this.materias */
+
+  //ejecutar actualizacion en loas archivos materia
+  updateMateria(apellido: any) {
+    this.infoUser.arrayMaterias.forEach(element => {
+      this.authService.updateMateriaNombreProfesor(element.id, this.infoUser.nombre + ' ' + apellido);
+    });
+  }
+
+
   eraser() {
     this.apellidoForm.patchValue({ lastName: "" });
   }
+
+
+
 
   dimissModal() {
     this.dialogRef.close();
@@ -114,9 +127,8 @@ export class ApellidoPage implements OnInit {
       }
     }
     if (letras.indexOf(tecla) == -1 && !tecla_especial) {
-      this.authService.showInfo('No se admite el ingreso de números');
+      this.authService.showInfo('No se admite el ingreso de números.');
       return false;
     }
   }
-
 }

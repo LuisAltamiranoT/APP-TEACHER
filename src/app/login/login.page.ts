@@ -36,7 +36,6 @@ export class LoginPage implements OnInit {
     });
   }
 
-
   async onLogin() {
     try {
       this.validate = false;
@@ -63,6 +62,11 @@ export class LoginPage implements OnInit {
     }
   }
 
+  openReset() {
+    this.dismiss();
+    this.router.navigate(['/forgot-password']);
+  }
+
   matchEmail() {
     return (control: AbstractControl): { [s: string]: boolean } => {
       // control.parent es el FormGroup
@@ -81,11 +85,6 @@ export class LoginPage implements OnInit {
       //this.validacionEmail=true;
       return null;
     };
-  }
-
-  openReset() {
-    this.dismiss();
-    this.router.navigate(['/forgot-password']);
   }
 
 }

@@ -30,24 +30,31 @@ export class PasswordPage implements OnInit {
     private authService: AuthService
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
   async onClick() {
     this.validate = false;
     const { oldPassword, newPassword, rePassword } = this.passwordForm.value;
-    const dat = await this.authService.updatePass(oldPassword, newPassword);
-    if (dat != 1) {
+    if (newPassword != rePassword) {
+      this.authService.showError("Existe un error en los datos ingresados");
       this.validate = true;
     } else {
-      this.dimissModal();
-      this.authService.showSuccess("Su contraseña ha sido actualizada");
+      const dat = await this.authService.updatePass(oldPassword, newPassword);
+      if (dat != 1) {
+        this.validate = true;
+      } else {
+        this.dimissModal();
+      }
     }
   }
 
-
   dimissModal() {
     this.dialogRef.close();
+  }
+
+  eraser() {
+    this.passwordForm.patchValue({ office: "" });
   }
 
   match(controlKey: string) {
@@ -73,7 +80,7 @@ export class PasswordPage implements OnInit {
         let data = control.value;
         const value = control.parent.controls[controlKey].value;
         console.log(value);
-        if (data === value && value!=="") {
+        if (data === value && value !== "") {
           this.mensaje = 'La nueva contraseña es igual a la anterior';
           return {
             match: true
@@ -85,5 +92,4 @@ export class PasswordPage implements OnInit {
       }
     };
   }
-
 }

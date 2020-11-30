@@ -14,7 +14,7 @@ export class InfoPage implements OnInit {
   validate = true;
 
   placeholder = "Escribe algo sobre ti";
-  mensaje = '';
+  mensaje = "";
 
   infoForm = new FormGroup({
     info: new FormControl('', [this.match()])
@@ -23,17 +23,17 @@ export class InfoPage implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<InfoPage>,
     @Inject(MAT_DIALOG_DATA) public infoUser: any,
-    private authService: AuthService,
-
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
-
     if (this.infoUser == "") {
+
     } else {
       this.infoForm.patchValue({ info: this.infoUser });
       this.placeholder = this.infoUser;
     }
+
   }
 
   async onClick() {
@@ -42,10 +42,8 @@ export class InfoPage implements OnInit {
       const { info } = this.infoForm.value;
       const dat = await this.authService.updateDescripcion(info);
       if (dat) {
-        this.authService.showUpdatedata();
         this.dialogRef.close();
-      }
-      if (!dat) {
+      } else {
         this.validate = true;
       }
     } catch (error) {

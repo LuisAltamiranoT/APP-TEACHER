@@ -1,12 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+// Subscripción a un observable
+import { Subscription } from "rxjs";
 
 import { AuthService } from 'src/app/service/auth/auth.service';
 import { UploadImageService } from 'src/app/service/subir-foto/upload-image.service';
-
-//subscripcion a un observable
-import { Subscription } from "rxjs";
 
 interface HtmlInputEvent extends Event {
   target: HTMLInputElement & EventTarget;
@@ -17,6 +16,7 @@ interface HtmlInputEvent extends Event {
   templateUrl: './edit-image.page.html',
   styleUrls: ['./edit-image.page.scss'],
 })
+
 export class EditImagePage implements OnInit {
 
   private stateImage: Subscription = null;
@@ -42,7 +42,7 @@ export class EditImagePage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.photoSelected = '../../../../assets/icon/aqui.jpg';
+    this.photoSelected = 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/nival%2Faqui.jpg?alt=media&token=e012db0c-46aa-4e36-bfa2-790a308fd4d8';
 
     this.stateImage = this.authService.finalizoImage$.subscribe(() => {
       this.dimissModal();
@@ -83,17 +83,17 @@ export class EditImagePage implements OnInit {
 
   addFoto() {
     this.validate = false;
-    if (this.validImage && this.infoUser.image === ' ') {
-      let data = this.uploadImage.preAddAndUpdateCurso(this.file, this.infoUser.idCurso);
+    if (this.validImage && this.infoUser.image === '') {
+      console.log('llego aqui');
+      this.uploadImage.preAddAndUpdateCurso(this.file, this.infoUser);
     } else {
-      let data = this.uploadImage.preAddAndUpdateCurso(this.file, this.infoUser.idCurso);
+      this.uploadImage.preAddAndUpdateCurso(this.file, this.infoUser);
       this.uploadImage.deleteImageCurso(this.infoUser.image);
     }
   }
 
   dimissModal() {
     this.validate = true;
-    this.authService.showSuccess('La información se ha actualizado');
     this.dialogRef.close();
   }
 
@@ -101,5 +101,6 @@ export class EditImagePage implements OnInit {
   closeModal() {
     this.dialogRef.close();
   }
+
 
 }

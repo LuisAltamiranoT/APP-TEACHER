@@ -3,17 +3,17 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AuthService } from 'src/app/service/auth/auth.service'
 
-
 @Component({
   selector: 'app-delete-estudiante',
   templateUrl: './delete-estudiante.page.html',
   styleUrls: ['./delete-estudiante.page.scss'],
 })
+
 export class DeleteEstudiantePage implements OnInit {
 
   placeholder = ""
   validate = true;
-
+  
   constructor(
     public dialogRef: MatDialogRef<DeleteEstudiantePage>,
     @Inject(MAT_DIALOG_DATA) public infoUser: any,
@@ -24,14 +24,15 @@ export class DeleteEstudiantePage implements OnInit {
     this.placeholder = this.infoUser.nombre;
   }
 
-  async onClick() {
+  
+  onClick() {
     try {
       this.validate = false;
-      const dat = await this.authService.delecteEstudiante(this.infoUser.idCurso, this.infoUser.idEstudiante);
-      if (dat != 0) {
-        this.authService.showSuccess('El registro ha sido eliminado');
+      const dat = this.authService.deleteEstudiante(this.infoUser.idMateria, this.infoUser.idNomina,this.infoUser.array);
+      ////idMateria: any, idNomina: any,ArrayEstudiante:any
+      if (dat) {
         this.dialogRef.close();
-      } else {
+      }else{
         this.validate = true;
       }
     } catch (error) {
@@ -42,5 +43,4 @@ export class DeleteEstudiantePage implements OnInit {
   dimissModal() {
     this.dialogRef.close();
   }
-
 }

@@ -17,7 +17,6 @@ import { ImageValidator } from 'src/app/shared/helpers/imageValidators';
   providedIn: 'root'
 })
 export class UploadImageService extends ImageValidator {
-
   private filePath: any;
   private downloadURL: Observable<string>;
   private MEDIA_STORAGE_PATH = 'imageCurso';
@@ -33,50 +32,110 @@ export class UploadImageService extends ImageValidator {
     super();
   }
 
-  public preAddAndUpdate(data: any, image: FileI, dataNomina: any, dataHorario: any) {
-    this.nominaDat = dataNomina;
-    this.nominaHorario = dataHorario;
-    console.log('estamos en el service' + image.name);
-    this.uploadImageService(data, image, this.MEDIA_STORAGE_PATH, 'addCurso');
-  }
-
-  public preAddAndUpdateCurso(image: FileI, idCurso: any) {
-    let data = idCurso;
-    this.uploadImageService(data, image, this.MEDIA_STORAGE_PATH, 'updateCurso');
-  }
-
-  public preAddAndUpdatePerfil(image: FileI) {
-    let data = '';
-    this.uploadImageService(data, image, this.MEDIA_STORAGE_PATH_PERFIL, 'updatePerfil');
-  }
-
-
-  private uploadImageService(data: any, image: FileI, filenameFs: string, clave: any) {
-    let item = false;
-    this.filePath = this.generateFileName(image.name, filenameFs);
+  public preAddAndUpdate(aula: any, idMateria: any, image: FileI, nomina: any, horario: any, cursos: any, idCursoNuevo) {
+    //aula,idMateria,image,Nomina,Horario,cursos
+    this.filePath = this.generateFileName(image.name, this.MEDIA_STORAGE_PATH);
     const fileRef = this.storage.ref(this.filePath);
     const task = this.storage.upload(this.filePath, image);
     let dataTsk = task.snapshotChanges().pipe(
       finalize(() => {
         fileRef.getDownloadURL().subscribe(urlImage => {
           this.downloadURL = urlImage;
-          if (clave === 'addCurso') {
-            this.addCurso(data);
-          }
-          if (clave === 'updatePerfil') {
-            this.addPhoto();
-          }
-          if (clave === 'updateCurso') {
-            this.updateImageCurso(data);
-          }
+          //aqui se ejecuta el
+          this.addCurso(aula, idMateria, horario, nomina, cursos, idCursoNuevo);
+          //aula,idMateria,horario,nomina,arrayCursos
+        });
+      })
+    ).subscribe();
+    //cursos,idMateria,idCurso,nomina
+  }
 
+  async addCurso(aula: any, idMateria: any, horario: any, nomina: any, arrayCurso: any, idCursoNuevo: any) {
+    //aula,idMateria,horario,nomina,arrayCursos
+    let cursos = arrayCurso;
+    let idCurso = idCursoNuevo;
+    let cursoNuevo = await this.authService.createNomina(nomina, idCurso, idMateria);
+
+    cursos.push({
+      id: idCurso,
+      aula: aula,
+      image: this.downloadURL,
+      horario: horario,
+      uidNomina: cursoNuevo.id
+    });
+    await this.authService.createCurso(cursos, idMateria);
+  }
+
+  /**
+    public preAddAndUpdateCurso(image: FileI, idCurso:any) {
+      let data=idCurso;
+      this.uploadImageService(data, image, this.MEDIA_STORAGE_PATH,'updateCurso');
+    }
+  */
+  /**
+   *  image:this.photoSelected,
+          idMateria:this.idMateria,
+          arrayGuardado: this.dataMateria[0].cursos[this.idIndexCurso],
+          arrayCompleto:this.dataMateria,
+   */
+  public preAddAndUpdateCurso(image: any, array: any) {
+    //aula,idMateria,image,Nomina,Horario,cursos
+    this.filePath = this.generateFileName(image.name, this.MEDIA_STORAGE_PATH);
+    const fileRef = this.storage.ref(this.filePath);
+    const task = this.storage.upload(this.filePath, image);
+    let dataTsk = task.snapshotChanges().pipe(
+      finalize(() => {
+        fileRef.getDownloadURL().subscribe(urlImage => {
+          this.downloadURL = urlImage;
+          array.arrayGuardado.image = this.downloadURL;
+          this.authService.updateImageCurso(array.arrayCompleto, array.idMateria);
+          //aula,idMateria,horario,nomina,arrayCursos
+        });
+      })
+    ).subscribe();
+    //cursos,idMateria,idCurso,nomina
+  }
+
+  public deleteImageCurso(imageName: string) {
+    try {
+      let splitted = imageName.split("imageCurso%2F")[1];
+      let name = splitted.split("?alt")[0];
+      const fileref = this.storage.ref(`${this.MEDIA_STORAGE_PATH}/${name}`);
+      fileref.delete();
+    } catch (error) {
+
+    }
+  }
+
+  public async updateImageCurso(idCurso: any) {
+    let info = await this.authService.updatePhotoCurso(this.downloadURL, idCurso);
+    return info;
+  }
+
+  private generateFileName(name: string, filenameFs: string): string {
+    return `${filenameFs}/${new Date().getTime()}_${name}`;
+  }
+
+
+  public preAddAndUpdatePerfil(image: FileI, arrayMaterias: any) {
+    let item = false;
+    this.filePath = this.generateFileName(image.name, this.MEDIA_STORAGE_PATH_PERFIL);
+    const fileRef = this.storage.ref(this.filePath);
+    const task = this.storage.upload(this.filePath, image);
+    let dataTsk = task.snapshotChanges().pipe(
+      finalize(() => {
+        fileRef.getDownloadURL().subscribe(urlImage => {
+          this.downloadURL = urlImage;
+          this.addPhoto(arrayMaterias);
         });
       })
     ).subscribe();
   }
 
-
-  public async addPhoto() {
+  public async addPhoto(arrayMaterias: any) {
+    arrayMaterias.forEach(element => {
+      this.authService.updateMateriaFotoProfesor(element.id, this.downloadURL);
+    });
     let info = await this.authService.updatePhoto(this.downloadURL);
     return info;
   }
@@ -87,81 +146,4 @@ export class UploadImageService extends ImageValidator {
     const fileref = this.storage.ref(`${this.MEDIA_STORAGE_PATH_PERFIL}/${name}`);
     fileref.delete();
   }
-
-  public async updateImageCurso(idCurso: any) {
-    let info = await this.authService.updatePhotoCurso(this.downloadURL, idCurso);
-    return info;
-  }
-
-  public deleteImageCurso(imageName: string) {
-    let splitted = imageName.split("imageCurso%2F")[1];
-    let name = splitted.split("?alt")[0];
-    const fileref = this.storage.ref(`${this.MEDIA_STORAGE_PATH}/${name}`);
-    fileref.delete();
-  }
-
-  private generateFileName(name: string, filenameFs: string): string {
-    return `${filenameFs}/${new Date().getTime()}_${name}`;
-  }
-
-  public async addCurso(data: Curso) {
-    let curso: Curso = {
-      uidMateria: data.uidMateria,
-      aula: data.aula
-    }
-    let info = await this.authService.preparateCreateCurso(data, this.downloadURL, this.nominaDat, this.nominaHorario);
-    console.log('funcion add cuerso', info)
-    return info;
-  }
-
 }
-
-
-/*
-
-
- private stateImage: Subscription = null;
-  //Validar archivo
-  validFile = false;
-  //Array de codigo unico
-  archivoExcel: any = [];
-  //nombre del archivo excel
-  nombreFile = '';
-  //control de progressbar
-  validate = true;
-  //controla que se sea visible el horario
-  public validacionDeMateria: boolean = false;
-  //controla que sa seleccionada una materia
-  public materiaSeleccionada = '';
-  //esta almacena el id de la materia
-  public idMateriaSeleccionada = '';
-  //almacena el nombre del curso
-  public nombreAula='';
-  //carga la informacion de la base de datos
-  public materias = [];
-  //caraga la informacion del curso
-  public curso=[];
-  //carga horario guardado
-  public horarioGuardado=[];
-  //Es el horario que se agregar con el nuevo curso
-  public nuevoHorario: any = [];
-  //image="";
-  placeholder = 'Ingresa informacion sobre el aula';
-  private file: any;
-  public photoSelected: string | ArrayBuffer;
-  private validImage: boolean = false;
-
-
-  clearFile(){
-    this.archivoExcel=[];
-    this.cursoForm.patchValue({ file: '',image:'', aula:'',materiaSelect:''});
-    this.validFile=false;
-    this.validacionDeMateria=false,
-    this.idMateriaSeleccionada='',
-    this.nombreFile='';
-    this.nombreAula='';
-    this.materiaSeleccionada=''
-    this.nuevoHorario=[];
-    //console.log(this.archivoExcel);
-  } */
-

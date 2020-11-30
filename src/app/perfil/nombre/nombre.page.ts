@@ -21,17 +21,49 @@ export class NombrePage implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<NombrePage>,
     @Inject(MAT_DIALOG_DATA) public infoUser: any,
-    private authService: AuthService
+    private authService: AuthService,
   ) { }
 
-  ngOnInit() {
-    //console.log(this.infoUser);
+  ngOnInit(): void {
+
+    /*nombre:this.nombre,
+      apellido:this.apellido,
+      arrayMaterias:this.materias */
+
+    console.log(this.infoUser);
 
     if (this.infoUser == "") {
 
     } else {
-      this.nombreForm.patchValue({ name: this.infoUser });
-      this.placeholder = this.infoUser;
+      //almacena informacion
+      this.nombreForm.patchValue({ name: this.infoUser.nombre });
+      this.placeholder = this.infoUser.nombre;
+    }
+  }
+
+
+  eraser() {
+    this.nombreForm.patchValue({ name: "" });
+  }
+
+
+  IngresarSoloLetras(e) {
+    let key = e.keyCode || e.which;
+    let tecla = String.fromCharCode(key).toString();
+    //Se define todo el abecedario que se va a usar.
+    let letras = " áéíóúabcdefghijklmnñopqrstuvwxyzÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+    //Es la validación del KeyCodes, que teclas recibe el campo de texto.
+    let especiales = [8, 37, 39, 46, 6, 13];
+    let tecla_especial = false
+    for (var i in especiales) {
+      if (key == especiales[i]) {
+        tecla_especial = true;
+        break;
+      }
+    }
+    if (letras.indexOf(tecla) == -1 && !tecla_especial) {
+      this.authService.showInfo('No se admite el ingreso de números.');
+      return false;
     }
   }
 
@@ -40,9 +72,9 @@ export class NombrePage implements OnInit {
       this.validate = false;
       this.mensaje = '';
       const { name } = this.nombreForm.value;
+      this.updateMateria(name);
       const dat = await this.authService.updateName(name);
       if (dat) {
-        this.authService.showUpdatedata();
         this.dialogRef.close();
       } else {
         this.validate = true;
@@ -52,15 +84,18 @@ export class NombrePage implements OnInit {
     }
   }
 
+  //ejecutar actualizacion en loas archivos materia
+  updateMateria(nombre:any){
+    this.infoUser.arrayMaterias.forEach(element => {
+      this.authService.updateMateriaNombreProfesor(element.id,nombre+' '+this.infoUser.apellido);
+    });
+  }
 
   dimissModal() {
-    this.dialogRef.close();
     this.mensaje = '';
+    this.dialogRef.close();
   }
 
-  eraser() {
-    this.nombreForm.patchValue({ name: "" });
-  }
 
   //validar dos nombres
   match() {
@@ -84,7 +119,7 @@ export class NombrePage implements OnInit {
           return {
             match: true
           };
-        } else if (data[1] === "" || data[1] === undefined) {
+        } else if (data[1] === "") {
           this.mensaje = 'Debe ingresar dos nombres';
           return {
             match: true
@@ -95,24 +130,8 @@ export class NombrePage implements OnInit {
       return null;
     };
   }
-
-  IngresarSoloLetras(e) {
-    let key = e.keyCode || e.which;
-    let tecla = String.fromCharCode(key).toString();
-    //Se define todo el abecedario que se va a usar.
-    let letras = " áéíóúabcdefghijklmnñopqrstuvwxyzÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-    //Es la validación del KeyCodes, que teclas recibe el campo de texto.
-    let especiales = [8, 37, 39, 46, 6, 13];
-    let tecla_especial = false
-    for (var i in especiales) {
-      if (key == especiales[i]) {
-        tecla_especial = true;
-        break;
-      }
-    }
-    if (letras.indexOf(tecla) == -1 && !tecla_especial) {
-      this.authService.showInfo('No se admite el ingreso de números');
-      return false;
-    }
+  
+  limpiarBusqueda() {
+    this.nombreForm.patchValue({ name: "" });
   }
 }

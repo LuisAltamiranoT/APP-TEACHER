@@ -1,76 +1,35 @@
-<ion-header>
-  <ion-toolbar>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
+<h2 mat-dialog-title class="pb-1">Editar Asistencia:</h2>
+<div *ngIf="validate else login">
   <ion-grid>
     <ion-row>
       <ion-col size="12">
-        <h4 class="font-weight-normal">
-          <mat-icon class="fa-nival" matSuffix>description</mat-icon> Reporte de Asistencia de {{nombreMateria}}
-        </h4>
-        <h5 class="font-weight-normal">
-          <mat-icon class="fa-nival" matSuffix>person</mat-icon> Estudiante: {{nombreEstudiante}}
-        </h5>
+        <h3>{{fecha}}</h3>
       </ion-col>
       <ion-col size="12">
-        <hr class="hr-nival">
+        <mat-checkbox color="primary" [checked]=presente (change)="showOptionsPresente($event)"> Presente</mat-checkbox>
       </ion-col>
       <ion-col size="12">
-        <h4 class="font-weight-normal">
-          <a style="text-decoration: none;" [routerLink]="['/reporte-general', dataId, fecha_inicio, fecha_fin]">
-            <ion-icon name="document-outline" class="pr-1 fa-nival"></ion-icon>Descargar Reporte
-          </a>
-        </h4>
+        <mat-checkbox color="primary" [checked]=atraso (change)="showOptionsAtraso($event)">Atraso</mat-checkbox>
       </ion-col>
       <ion-col size="12">
-        <div class="example-container mat-elevation-z3">
-          <mat-form-field class="busqueda1">
-            <mat-label>Buscar</mat-label>
-            <input matInput autocomplete="off" (keyup)="applyFilter($event)" placeholder="Ejemplo 201720 o Pepito Perez"
-              #input>
-          </mat-form-field>
-          <table mat-table [dataSource]="dataSource" #tabla1>
-
-            <!-- Numero de fila -->
-            <ng-container matColumnDef="fila">
-              <th mat-header-cell *matHeaderCellDef> N° </th>
-              <td mat-cell *matCellDef="let element ,let i = index;"> {{i+1}}
-              </td>
-            </ng-container>
-
-            <!-- Position Column -->
-            <ng-container matColumnDef="fecha">
-              <th mat-header-cell *matHeaderCellDef> Fechas </th>
-              <td mat-cell *matCellDef="let element"> {{element.codigoUnico}}
-              </td>
-            </ng-container>
-
-            <!-- Name Column -->
-            <ng-container matColumnDef="asistencia">
-              <th mat-header-cell *matHeaderCellDef> Asistencia </th>
-              <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
-                <a class="text-center">
-                  P
-                </a>
-              </td>
-            </ng-container>
-            <!-- Symbol Column -->
-            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-            <tr class="mat-row" *matNoDataRow>
-              <td class="mat-cell" colspan="5">No se ha encontrado: "{{input.value}}"</td>
-            </tr>
-          </table>
-        </div>
+        <mat-checkbox color="primary" [checked]=falta (change)="showOptionsFalta($event)">Falta</mat-checkbox>
       </ion-col>
     </ion-row>
   </ion-grid>
-</ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-  </ion-toolbar>
-</ion-footer>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-sm-6>
+        <ion-button type="submit" expand="full" size="small" (click)="agregarArray()">
+          <ion-icon name="send-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col col-12 col-sm-6>
+        <ion-button (click)=" dimissModal()" color="red" expand="full" size="small">
+          <ion-icon name="close-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ng-template #login>
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  </ng-template>

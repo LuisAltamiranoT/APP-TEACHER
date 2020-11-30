@@ -1,16 +1,8 @@
 <div *ngIf="validate else barra">
 </div>
+<h2 mat-dialog-title>Esta seguro de borrar el registro de: </h2>
+<h3 mat-dialog-title class="text-info pb-1 text-center">{{placeholder}}</h3>
 <ion-grid>
-  <ion-row>
-    <ion-col col-12 col-sm-12>
-      <h2 mat-dialog-title>Esta seguro de borrar el registro de: </h2>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col col-12 col-sm-12>
-      <h3 mat-dialog-title class="text-info pb-1 text-center">{{placeholder}}</h3>
-    </ion-col>
-  </ion-row>
   <ion-row>
     <ion-col col-12 col-sm-4>
       <ion-button expand="full" size="small" (click)="onClick()">

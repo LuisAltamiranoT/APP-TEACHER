@@ -1,16 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-//import { ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 import { InfoPage } from 'src/app/perfil/info/info.page';
 import { NombrePage } from 'src/app/perfil/nombre/nombre.page';
-
-import { AuthService } from '../../service/auth/auth.service';
-import { Router } from '@angular/router';
-import * as moment from 'moment';
-
 import { ApellidoPage } from 'src/app/perfil/apellido/apellido.page';
 import { PasswordPage } from 'src/app/perfil/password/password.page';
-import { CursoGroupPage } from 'src/app/curso/curso-group/curso-group.page';
 import { MateriaPage } from 'src/app/perfil/materia/materia.page';
 import { OficinaPage } from 'src/app/perfil/oficina/oficina.page';
 import { EditarMateriaPage } from 'src/app/perfil/editar-materia/editar-materia.page';
@@ -18,9 +14,9 @@ import { EliminarDataPage } from 'src/app/perfil/eliminar-data/eliminar-data.pag
 import { EditarAnioPage } from 'src/app/perfil/editar-anio/editar-anio.page';
 import { FotoPage } from 'src/app/perfil/foto/foto.page';
 
-import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
-
+import { AuthService } from '../../service/auth/auth.service';
+import { EliminarCursoPage } from '../eliminar-curso/eliminar-curso.page';
+import { DeletePage } from '../delete/delete.page';
 
 @Component({
   selector: 'app-perfil',
@@ -30,8 +26,8 @@ import { Subscription } from 'rxjs';
 
 export class PerfilPage implements OnInit {
 
-  image = "../../../../assets/icon/profe.jpg";
-  perfil = "../../../../assets/icon/perfil.jpg";
+  image = "../../../assets/profe.jpg";
+  perfil = "https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680";
   nombre = "";
   apellido = "";
   oficina = "";
@@ -50,7 +46,6 @@ export class PerfilPage implements OnInit {
   val = true;
 
   private suscripcion1: Subscription;
-  private suscripcion2: Subscription;
   private suscripcion3: Subscription;
 
   // Variables para revisar la parte de encriptación //
@@ -62,7 +57,6 @@ export class PerfilPage implements OnInit {
   textodesencriptado_mal: string;
 
   constructor(
-   // public modalController: ModalController,
     public ventana: MatDialog,
     private authService: AuthService,
     private router: Router
@@ -71,37 +65,19 @@ export class PerfilPage implements OnInit {
   ngOnInit(): void {
     this.dataUser();
     this.materia();
-    this.curso();
-
-    //prueba de encriptacion
-    this.pruebaEncriptar();
-  }
-
-  // Funcion para encriptar //
-  pruebaEncriptar() {
-    /* this.texto = 'Mi materia favorita';
-     this.clave = 'NivalAPP';
-     this.pass_prueba = 'Jenny';
-     this.textoencriptado = CryptoJS.AES.encrypt(this.texto.trim(), this.clave.trim()).toString();
-     this.textodesencriptado = CryptoJS.AES.decrypt(this.textoencriptado.trim(), this.clave.trim()).toString(CryptoJS.enc.Utf8);
-     this.textodesencriptado_mal = CryptoJS.AES.decrypt(this.textoencriptado.trim(), this.pass_prueba.trim()).toString(CryptoJS.enc.Utf8);
-     console.log('Texto ----> ', this.texto)
-     console.log('Encripatdo ----> ', this.textoencriptado)
-     console.log('Desencriptado_clave_verdadera ----> ', this.textodesencriptado)
-     console.log('Desencriptar_clave_falsa ----> ', this.textodesencriptado_mal)*/
 
   }
+
 
   ngOnDestroy() {
     this.suscripcion1.unsubscribe();
-    this.suscripcion2.unsubscribe();
     this.suscripcion3.unsubscribe();
   }
 
   dataUser() {
     this.suscripcion1 = this.authService.getDataUser().subscribe((data) => {
       let dataUser: any = [data.payload.data()];
-      this.nombre =dataUser[0].nombre;
+      this.nombre = dataUser[0].nombre;
       this.apellido = dataUser[0].apellido;
       this.correo = dataUser[0].email;
       this.informacion = dataUser[0].info;
@@ -113,31 +89,26 @@ export class PerfilPage implements OnInit {
     });
   }
 
-  curso() {
-    this.suscripcion2 = this.authService.getDataCurso().subscribe((data) => {
-      this.cursos.length = 0;
-      data.forEach((dataCurso: any) => {
-        this.cursos.push({
-          id: dataCurso.payload.doc.id,
-          data: dataCurso.payload.doc.data()
-        });
-      })
-      this.cargarData();
-    });
-  }
+  //curso completo
 
   cargarData() {
+    this.cursoCompleto.length = 0;
     this.materias.forEach(elementMateria => {
-      this.cursos.forEach(elementCurso => {
-        if (elementMateria.id === elementCurso.data.uidMateria) {
-          this.cursoCompleto.push({
-            idCurso: elementCurso.id,
-            nombre: elementMateria.data.nombre + ' ' + elementCurso.data.aula
-          })
-        }
+      elementMateria.data.cursos.forEach(elementCurso => {
+        //console.log(elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id);
+        this.cursoCompleto.push({
+          idCurso: elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementCurso.id,
+          nombre: elementMateria.data.nombre + ' ' + elementCurso.aula,
+          image: elementCurso.image,
+          array: elementCurso,
+          uidNomina: elementCurso.uidNomina,
+          idMateria: elementMateria.id
+        })
       });
     });
   }
+
+
 
   materia() {
     this.suscripcion3 = this.authService.getDataMateria().subscribe((data) => {
@@ -148,101 +119,139 @@ export class PerfilPage implements OnInit {
           data: dataMateria.payload.doc.data()
         });
       })
+      this.cargarData();
     });
   }
 
-  //eliminar curso
-  eliminarCurso(idCurso: any) {
-
-  }
   //editar curso
   editarCurso(idCurso: any) {
     this.router.navigate(['edit-curso', idCurso]);
   }
 
-   openAnioLectivoModal() {
-     this.openMaterial(EditarAnioPage);
-   }
- 
-   openNombreModal() {
-     this.openMaterial1(NombrePage, this.nombre);
-   }
- 
-   openInfoModal() {
-     this.openMaterial1(InfoPage, this.informacion);
-   }
- 
-   openApellidoModal() {
-     this.openMaterial1(ApellidoPage, this.apellido);
-   }
- 
-   openOficinaModal() {
-     this.openMaterial1(OficinaPage, this.oficina);
-   }
- 
-   openPasswordModal() {
-     this.openMaterial1(PasswordPage, this.password);
-   }
- 
-   openMateriaModal() {
-     this.openMaterial(MateriaPage);
-   }
- 
-   openEditMateriaModal(data: any, idData: any) {
-     let dataMateria = {
-       nombre: data,
-       id: idData,
-       array: this.materias
-     }
-     this.openMaterial1(EditarMateriaPage, dataMateria);
-   }
- 
-   openEliminarMateriaModal(data: any, idData: any) {
-     let dataMateria = {
-       nombre: data,
-       id: idData
-     }
-     this.openMaterial1(EliminarDataPage, dataMateria);
-   }
- 
-   openPhoto() {
-     if (this.perfil != "../../../../assets/perfil.jpg") {
-       this.ventana.open(FotoPage,
-         { width: ' 25rem', data: this.perfil }).afterClosed().subscribe(item => {
-         });
-     } else {
-       this.ventana.open(FotoPage,
-         { width: ' 25rem', data: 'no-image' }).afterClosed().subscribe(item => {
-         });
-     }
-   }
-
-  openDeleteModal() {
-    console.log("hay que borar datos");
+  openAnioLectivoModal() {
+    this.openMaterial(EditarAnioPage);
   }
 
-   openMaterial(Page: any) {
-     this.ventana.open(Page,
-       { width: ' 25rem' }).afterClosed().subscribe(item => {
-         //this.ListaDepartamentos();
-         // Aqui va algo que quieras hacer al cerrar el Pagee
-         // yo se poner la actualizacion de la pagina jejjeje
-       });
-   }
- 
-   openMaterial1(Page: any, info: any) {
-     this.ventana.open(Page,
-       { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
-       });
-   }
+  //al momento de actualizar el nombre se ebe actualizar en las materias que tenga el usuario
+  openNombreModal() {
+    let info = {
+      nombre: this.nombre,
+      apellido: this.apellido,
+      arrayMaterias: this.materias
+    }
+    this.openMaterial1(NombrePage, info);
+  }
+
+  openInfoModal() {
+    this.openMaterial1(InfoPage, this.informacion);
+  }
+
+  openApellidoModal() {
+    let info = {
+      nombre: this.nombre,
+      apellido: this.apellido,
+      arrayMaterias: this.materias
+    }
+    this.openMaterial1(ApellidoPage, info);
+  }
+
+  openOficinaModal() {
+    this.openMaterial1(OficinaPage, this.oficina);
+  }
+
+  openPasswordModal() {
+    this.openMaterial(PasswordPage);
+  }
+
+  openMateriaModal() {
+    let data = {
+      nombre: this.nombre + ' ' + this.apellido,
+      image: this.perfil
+    }
+    this.openMaterial1(MateriaPage, data);
+  }
+
+  openEditMateriaModal(nombre: any, idMateria: any) {
+    let dataMateria = {
+      nombre: nombre,
+      id: idMateria,
+      array: this.materias
+    }
+    this.openMaterial1(EditarMateriaPage, dataMateria);
+  }
+
+  openEliminarMateriaModal(data: any, idData: any, dataArray: any) {
+    let dataMateria = {
+      nombre: data,
+      id: idData,
+      array: dataArray,
+    }
+    this.openMaterial1(EliminarDataPage, dataMateria);
+  }
+
+  /*
+   idCurso:elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id,
+    nombre: elementMateria.data.nombre + ' ' + elementCurso.aula,
+    image: elementCurso.image,
+   array:array el array de la amteria
+   */
+
+  openEliminarCursoModal(nombre: any, uidNomina: any, image: any, idMateria: any, array: any) {
+    console.log(array)
+    let dataMateria = {
+      nombre: nombre,
+      uidNomina: uidNomina,
+      image: image,
+      idMateria: idMateria,
+      array: array
+    }
+    this.openMaterial1(EliminarCursoPage, dataMateria);
+  }
+
+  openPhoto() {
+    if (this.perfil != 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680') {
+      let info = {
+        data: this.perfil,
+        array:this.materias
+      }
+      this.ventana.open(FotoPage,
+        { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+        });
+    } else {
+      let info = {
+        data: 'no-image',
+        array:this.materias
+      }
+      this.ventana.open(FotoPage,
+        { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+        });
+    }
+  }
+
+  openDeleteModal() {
+    this.openMaterial(DeletePage);
+  }
+
+  openMaterial(component: any) {
+    this.ventana.open(component,
+      { width: ' 25rem' }).afterClosed().subscribe(item => {
+        this.cargarData();
+      });
+  }
+
+  openMaterial1(component: any, info: any) {
+    this.ventana.open(component,
+      { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+        this.materia();
+      });
+  }
 
 
   openCurso() {
     if (this.materias.length != 0) {
-      this.router.navigate(['add-curso']);
+      this.router.navigate(['curso']);
     } else {
       this.authService.showInfo("Agregue una materia en su lista");
     }
   }
-
 }

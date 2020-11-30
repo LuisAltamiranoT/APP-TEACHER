@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject } from '@angular/core';
-
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -7,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './view-image.page.html',
   styleUrls: ['./view-image.page.scss'],
 })
+
 export class ViewImagePage implements OnInit {
 
   constructor(
@@ -15,11 +15,6 @@ export class ViewImagePage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.infoUser);
-  }
-
-  dimissModal() {
-    this.dialogRef.close();
   }
 
 }

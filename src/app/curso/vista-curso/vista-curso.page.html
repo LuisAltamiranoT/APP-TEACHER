@@ -5,20 +5,59 @@
 <ion-content class="ion-padding">
   <ion-grid>
     <ion-row>
-      <ion-col size="12">
+      <ion-col size="6">
         <h3 class="font-weight-normal">
           <mat-icon class="fa-nival" matSuffix>format_list_bulleted</mat-icon> Asistencia
         </h3>
       </ion-col>
+      <ion-col size="6">
+        <button mat-button (click)='verOpciones()' style="float: right;">
+          <mat-icon class="fa-nival" matSuffix>reorder</mat-icon>
+          Opciones
+        </button>
+      </ion-col>
       <ion-col size="12">
         <h3 class="font-weight-normal">
-          <a style="text-decoration: none;" [routerLink]="['/codigo-qr',codigoQr]">
-            <ion-icon class="fa-nival" name="qr-code-sharp" style="font-size: 20px;"></ion-icon> Generar QR
-          </a>
-          <a style="float: right; text-decoration: none;" [routerLink]="['/reportes',dataId]">
-            <ion-icon class="fa-nival" name="folder-open-outline" style="font-size: 20px;"></ion-icon> Reportes
-          </a>
+          {{NombreMateria}}
         </h3>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" *ngIf="activarOpciones">
+        <a mat-button (click)="QR()" [routerLink]="['/codigo',codigoQr]">
+          <mat-icon>
+            qr_code_2
+          </mat-icon>
+          Generar QR
+        </a>
+        <br>
+        <a mat-button (click)="almacenarNominaFinalizado()">
+          <mat-icon>
+            save
+          </mat-icon>
+          Guardar Asistencia
+        </a>
+        <br>
+        <a mat-button (click)="changeBack()">
+          <mat-icon>
+            find_in_page
+          </mat-icon>
+          Ver Asistencia {{!estadoControl ? 'Anterior' : 'Actual'}}
+        </a>
+        <br>
+        <a mat-button (click)="changeState()">
+          <mat-icon>
+            settings
+          </mat-icon>
+          Cambiar {{!toggle ? 'Atraso' : 'Presente'}}
+        </a>
+        <br>
+        <a mat-button (click)='onReportes()'>
+          <mat-icon>
+            list_alt
+          </mat-icon>
+          Reportes
+        </a>
       </ion-col>
       <ion-col>
         <hr class="hr-nival">
@@ -26,26 +65,15 @@
           <mat-label>Buscar</mat-label>
           <input matInput autocomplete="off" (keyup)="applyFilter($event)" placeholder="Ejemplo 201720 o Pepito Perez"
             #input>
+          <mat-icon matSuffix (click)="limpiarBusqueda(input)">backspace</mat-icon>
         </mat-form-field>
       </ion-col>
     </ion-row>
-    <ion-grid>
-      <ion-row>
-        <ion-col col-12 col-sm-4>
-        </ion-col>
-        <ion-col col-12 col-sm-4>
-          <ion-button expand="full" size="small">
-            Finalizar Registro
-          </ion-button>
-        </ion-col>
-        <ion-col col-12 col-sm-4>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
     <ion-row>
       <ion-col col-12 col-sm-12>
-        <div class="example-container mat-elevation-z3">
+        <div class="example-container mat-elevation-z2">
           <table mat-table [dataSource]="dataSource" #tabla1>
+
             <!-- Numero de fila -->
             <ng-container matColumnDef="fila">
               <th mat-header-cell *matHeaderCellDef> N° </th>
@@ -60,13 +88,24 @@
               </td>
             </ng-container>
 
+            <!-- image colunm -->
+            <ng-container matColumnDef="image">
+              <th mat-header-cell *matHeaderCellDef> Imagen </th>
+              <td class="px-1" mat-cell *matCellDef="let element, let i = index;">
+                <a (click)='openPhoto(element.image)'>
+                  <img mat-card-image class="avatarNivalStudent" src={{element.image}} alt="noImage">
+                </a>
+              </td>
+            </ng-container>
+
+
             <!-- Name Column -->
-            <ng-container matColumnDef="nombre">
+            <ng-container matColumnDef="nombre" sticky>
               <th mat-header-cell *matHeaderCellDef> Nombre </th>
               <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
-                <h4 class="p-1 mt-2" style="text-align: left;">
+                <p class=" rounded p-1 mt-2">
                   {{element.nombre}}
-                </h4>
+                </p>
               </td>
             </ng-container>
 
@@ -75,7 +114,7 @@
               <th mat-header-cell *matHeaderCellDef> Presente </th>
               <td class="px-1" mat-cell *matCellDef="let element, let p = index;">
                 <mat-checkbox [checked]=element.presente [disabled]=element.presente
-                  (change)="showOptionsPresente($event, p, element.id)"></mat-checkbox>
+                  (change)="showOptionsPresente($event, p)"></mat-checkbox>
               </td>
             </ng-container>
 
@@ -84,17 +123,16 @@
               <th mat-header-cell *matHeaderCellDef> Atraso </th>
               <td class="px-1" mat-cell *matCellDef="let element, let a = index;">
                 <mat-checkbox [checked]=element.atraso [disabled]=element.atraso
-                  (change)="showOptionsAtraso($event, a,element.id)"></mat-checkbox>
+                  (change)="showOptionsAtraso($event, a)"></mat-checkbox>
               </td>
             </ng-container>
             <ng-container matColumnDef="falta">
               <th mat-header-cell *matHeaderCellDef> Falta </th>
               <td class="px-1" mat-cell *matCellDef="let element, let f = index;">
-                <mat-checkbox [checked]=element.falta [disabled]=element.falta
-                  (change)="showOptionsFalta($event, f,element.id)"></mat-checkbox>
+                <mat-checkbox [checked]=element.falta [disabled]=element.falta (change)="showOptionsFalta($event, f)">
+                </mat-checkbox>
               </td>
             </ng-container>
-
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 

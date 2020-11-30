@@ -1,4 +1,3 @@
-//Eliminar una materia
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
@@ -7,12 +6,12 @@ import { UploadImageService } from 'src/app/service/subir-foto/upload-image.serv
 import { AuthService } from 'src/app/service/auth/auth.service';
 
 @Component({
-  selector: 'app-eliminar-data',
-  templateUrl: './eliminar-data.page.html',
-  styleUrls: ['./eliminar-data.page.scss'],
+  selector: 'app-eliminar-curso',
+  templateUrl: './eliminar-curso.page.html',
+  styleUrls: ['./eliminar-curso.page.scss'],
 })
 
-export class EliminarDataPage implements OnInit {
+export class EliminarCursoPage implements OnInit {
 
   //validacion del bar
   validate = true;
@@ -22,13 +21,17 @@ export class EliminarDataPage implements OnInit {
   idData: any;
   //almacenar las materias 
   materiaSeleccionada: any;
+  //imagen
+  image: any;
+  //nomina
+  nomina: any;
   //formulario
   materiaForm = new FormGroup({
     //materia: new FormControl('')
   })
 
   constructor(
-    public dialogRef: MatDialogRef<EliminarDataPage>,
+    public dialogRef: MatDialogRef<EliminarCursoPage>,
     @Inject(MAT_DIALOG_DATA) public infoUser: any,
     private authService: AuthService,
     private UploadImageService: UploadImageService
@@ -37,30 +40,28 @@ export class EliminarDataPage implements OnInit {
   ngOnInit(): void {
     //this.materiaForm.patchValue({ materia: this.infoUser});
     /*
-          nombre: data,
-          id: idData,
-          array:dataArray,
+      nombre:nombre,
+      uidNomina: uidNomina,
+      image:image,
+      idMateria: idMateria,
+ array:array el array de la amteria
     */
-    this.idData = this.infoUser.id;
     this.materia = this.infoUser.nombre;
+    this.idData = this.infoUser.idMateria;
+    this.image = this.infoUser.image;
+    this.nomina = this.infoUser.uidNomina;
     this.materiaSeleccionada = this.infoUser.array;
-    console.log(this.idData, this.materia, this.materiaSeleccionada);
+    console.log('adsasdf', this.materiaSeleccionada, this.infoUser);
   }
 
   async onClick() {
     try {
       this.validate = false;
-      console.log(this.materiaSeleccionada.cursos.length);
-      if (this.materiaSeleccionada.cursos.length != 0) {
-        this.materiaSeleccionada.cursos.forEach(element => {
-          if (element.image != '') {
-            this.UploadImageService.deleteImageCurso(element.image);
-          }
-          this.authService.deleteNomina(this.idData, element.uidNomina);
-          //console.log('se imprime esto'+element.uidNomina);
-        });
+      if (this.image != '') {
+        this.UploadImageService.deleteImageCurso(this.image);
       }
-      let dat = await this.authService.delecteMateria(this.idData);
+      this.authService.deleteNomina(this.idData, this.nomina);
+      let dat = this.authService.deleteCurso(this.idData, this.materiaSeleccionada);
       if (dat) {
         this.validate = true;
         this.dialogRef.close();
@@ -77,4 +78,6 @@ export class EliminarDataPage implements OnInit {
   dimissModal() {
     this.dialogRef.close();
   }
+
+
 }

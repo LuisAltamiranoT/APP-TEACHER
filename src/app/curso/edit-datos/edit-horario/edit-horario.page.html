@@ -30,7 +30,7 @@
                   *ngIf="element.LD">
                   {{element.lunes}}
                 </button>
-                <a (click)="setHoraDiaLunes(l)" class="text-center text-muted" *ngIf="!element.LS && !element.LD">
+                <a (click)="setHoraDiaLunes(l,element.hora)" class="text-center text-muted" *ngIf="!element.LS && !element.LD">
                   <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
                 </a>
               </td>
@@ -52,7 +52,7 @@
                   *ngIf="element.MD">
                   {{element.martes}}
                 </button>
-                <a (click)="setHoraDiaMartes(m)" class="text-center text-muted" *ngIf="!element.MS && !element.MD">
+                <a (click)="setHoraDiaMartes(m,element.hora)" class="text-center text-muted" *ngIf="!element.MS && !element.MD">
                   <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
                 </a>
               </td>
@@ -74,7 +74,7 @@
                   *ngIf="element.MiD">
                   {{element.miercoles}}
                 </button>
-                <a (click)="setHoraDiaMiercoles(mi)" class="text-center text-muted"
+                <a (click)="setHoraDiaMiercoles(mi,element.hora)" class="text-center text-muted"
                   *ngIf="!element.MiS && !element.MiD">
                   <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
                 </a>
@@ -95,7 +95,7 @@
                   *ngIf="element.JD">
                   {{element.jueves}}
                 </button>
-                <a class="text-center text-muted" (click)="setHoraDiaJueves(j)" *ngIf="!element.JS && !element.JD">
+                <a class="text-center text-muted" (click)="setHoraDiaJueves(j,element.hora)" *ngIf="!element.JS && !element.JD">
                   <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
                 </a>
               </td>
@@ -116,7 +116,7 @@
                   *ngIf="element.VD">
                   {{element.viernes}}
                 </button>
-                <a class="text-center text-muted" (click)="setHoraDiaViernes(v)" *ngIf="!element.VS && !element.VD">
+                <a class="text-center text-muted" (click)="setHoraDiaViernes(v,element.hora)" *ngIf="!element.VS && !element.VD">
                   <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
                 </a>
               </td>
@@ -142,6 +142,7 @@
     </ion-col>
   </ion-row>
 </ion-grid>
+
 <ng-template #barra>
   <ion-progress-bar type="indeterminate"></ion-progress-bar>
 </ng-template>

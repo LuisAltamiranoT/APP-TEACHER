@@ -16,7 +16,6 @@ import { AngularFireModule } from '@angular/fire'
 import { AngularFireStorageModule, BUCKET } from '@angular/fire/storage';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { ReactiveFormsModule } from '@angular/forms';
-
 import { environment } from 'src/environments/environment';
 
 import { MatDialogModule } from '@angular/material/dialog';
@@ -45,7 +44,7 @@ import { FooterPage } from './footer/footer.page';
   declarations: [
     AppComponent,
     FooterPage,
-    NavbarPage
+    NavbarPage,
   ],
   entryComponents: [
   ],
