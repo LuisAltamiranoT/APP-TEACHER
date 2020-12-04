@@ -50,7 +50,7 @@ export class FotoPage implements OnInit {
         array:this.materias
      */
 
-    this.photoSelected = '../../../assets/aqui.jpg';
+    this.photoSelected = '../../../assets/icon/aqui.jpg';
 
     this.stateImage = this.authService.finalizoImage$.subscribe(() => {
       this.dimissModal();

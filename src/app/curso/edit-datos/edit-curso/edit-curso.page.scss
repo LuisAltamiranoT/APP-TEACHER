@@ -5,17 +5,11 @@
 }
 
 table {
+  text-align: center !important;
   width: 100%;
 }
 
-.mat-header-cell, .mat-footer-cell, .mat-cell {
-  box-sizing: border-box;
+.mat-header-cell {
   text-align: center;
-  justify-content:center;
-  padding: 5px !important;
-}
-
-td.mat-column-fila {
-  width: 100px;
-  padding-right: 15px;
+  padding: 5px;
 }

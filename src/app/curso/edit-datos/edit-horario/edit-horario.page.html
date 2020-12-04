@@ -106,7 +106,7 @@
               <td class="px-1" mat-cell *matCellDef="let element, let v = index;">
                 <!--Info para nuevas materias 
               LS estado actual LD estado Almacenado-->
-                <button mat-flat-button style="font-size: 14px; background-color: #56E2F3; color: white;"
+                <button mat-flat-button style="font-size: 14px; background-color: #56E2F3; color: white;" 
                   *ngIf="element.VS" (click)="delHoraDiaViernes(v)">
                   {{element.viernes}}
                   <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
