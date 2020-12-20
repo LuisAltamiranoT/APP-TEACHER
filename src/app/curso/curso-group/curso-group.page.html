@@ -2,54 +2,64 @@
   <ion-toolbar>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content *ngIf="validateSpinner else barra">
   <ion-grid>
     <ion-row class="ion-justify-content-center">
       <ion-col col-12 col-sm-12 class="ion-align-self-center">
         <h3 class="font-weight-normal">
-          <mat-icon class="fa-nival" matSuffix>folder_special
-          </mat-icon> Mis Clases
-          <a style="float: right; text-decoration: none;" [routerLink]="['/curso']">
-            <mat-icon class="fa-nival" matSuffix>add_box</mat-icon> Agregar Clase
+          <ion-icon class="fa-nival-bottom" name="folder-outline"></ion-icon> Mis Clases
+          <a style="float: right; text-decoration: none; color: black;" [routerLink]="['/curso']" *ngIf="validateMateriaGuardadas && networkStatus && networkStatus.connected">
+            <ion-icon class="fa-nival-bottom" name="add-outline"></ion-icon> Agregar Clase
           </a>
         </h3>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col col-12 col-sm-12>
         <hr class="hr-nival">
       </ion-col>
     </ion-row>
-    <ion-row *ngFor="let curso of cursoVista">
-      <ion-col col-12 col-sm-12>
+
+    <ion-row class="ion-justify-content-center" *ngFor="let curso of cursoVista">
+      <ion-col col-12 col-sm-6 class="ion-align-self-center">
         <mat-card class="example-card">
           <mat-card-header>
-            <mat-card-title>{{curso.nombre}}</mat-card-title>
-            <a style="float: right;" (click)="openEditCurso(curso.idCursoEdit)">
-              <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
-            </a>
+            <div mat-card-avatar [style.background-image]="'url('+img+')'" class="avatarDiv">
+              <div mat-card-avatar [style.background-image]="'url('+curso.photoUrl+')'" class="avatarDiv">
+              </div>
+            </div>
+            <mat-card-title>
+              <h3>{{curso.nombre}}</h3></mat-card-title>
           </mat-card-header>
-          <ion-row>
-            <ion-col col-12 col-sm-12>
-              <a (click)="openPhoto(curso.image)">
-                <img [src]="curso.image || '../../../assets/icon/clase.jpg'" alt="Imagen curso">
-              </a>
-            </ion-col>
-          </ion-row>
-          <mat-card-actions>
+          <a (click)="openPhoto(curso.image)">
+            <img [src]="curso.image" alt="Imagen curso" fallimg="curso">
+          </a>
+          <ion-grid>
             <ion-row>
-              <ion-col col-12 col-sm-12>
+              <ion-col col-6 col-sm-6>
                 <ion-button expand="full" size="small" color="info" (click)="openCurso(curso.idCurso)">
                   <ion-icon name="send-sharp"></ion-icon>
                 </ion-button>
               </ion-col>
+              <ion-col col-6 col-sm-6>
+                <ion-button expand="full" size="small" color="yellow" (click)="openEditCurso(curso.idCursoEdit)">
+                  <ion-icon name="create-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
             </ion-row>
-          </mat-card-actions>
+          </ion-grid>
         </mat-card>
       </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>
+
+<ng-template #barra>
+  <ion-content>
+    <div class="spinnerA">
+      <span class="spinnerB">
+        <ion-spinner color="info" icon="spiral"></ion-spinner>
+      </span>
+    </div>
+  </ion-content>
+</ng-template>
+
 <ion-footer>
   <ion-toolbar>
   </ion-toolbar>

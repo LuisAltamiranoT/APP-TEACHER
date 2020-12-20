@@ -28,13 +28,15 @@ export class DeleteEstudiantePage implements OnInit {
   onClick() {
     try {
       this.validate = false;
-      const dat = this.authService.deleteEstudiante(this.infoUser.idMateria, this.infoUser.idNomina,this.infoUser.array);
+      this.authService.deleteEstudiante(this.infoUser.idMateria, this.infoUser.idNomina,this.infoUser.array);
       ////idMateria: any, idNomina: any,ArrayEstudiante:any
-      if (dat) {
+      setTimeout(() => {
         this.dialogRef.close();
-      }else{
         this.validate = true;
-      }
+        this.authService.showUpdatedata();
+
+      }, 2000);
+
     } catch (error) {
       this.authService.showError(error);
     }

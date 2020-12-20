@@ -6,6 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatButtonModule} from '@angular/material/button';
+
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -23,7 +26,9 @@ import { PerfilPage } from './perfil.page';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    MatButtonModule
   ],
   declarations: [PerfilPage],
   providers: [

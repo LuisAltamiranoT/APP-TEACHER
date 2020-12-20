@@ -19,6 +19,8 @@ import { CursoGroupPageRoutingModule } from './curso-group-routing.module';
 
 import { CursoGroupPage } from './curso-group.page';
 
+import { NgFallimgModule } from 'ng-fallimg';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -32,7 +34,8 @@ import { CursoGroupPage } from './curso-group.page';
     //card
     MatCardModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    NgFallimgModule
   ],
   declarations: [CursoGroupPage]
 })

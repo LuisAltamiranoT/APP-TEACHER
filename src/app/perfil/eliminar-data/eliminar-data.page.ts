@@ -47,7 +47,7 @@ export class EliminarDataPage implements OnInit {
     console.log(this.idData, this.materia, this.materiaSeleccionada);
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       console.log(this.materiaSeleccionada.cursos.length);
@@ -57,17 +57,16 @@ export class EliminarDataPage implements OnInit {
             this.UploadImageService.deleteImageCurso(element.image);
           }
           this.authService.deleteNomina(this.idData, element.uidNomina);
-          //console.log('se imprime esto'+element.uidNomina);
         });
       }
-      let dat = await this.authService.delecteMateria(this.idData);
-      if (dat) {
-        this.validate = true;
-        this.dialogRef.close();
-      } else {
-        this.validate = true;
-      }
+      
+      this.authService.delecteMateria(this.idData);
 
+      setTimeout(() => {
+        this.dialogRef.close();
+        this.validate = true;
+        this.authService.showUpdatedata();
+      }, 2000);
 
     } catch (error) {
 

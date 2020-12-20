@@ -2,33 +2,40 @@
   <ion-toolbar>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-icon>
-        <ion-col col-12 col-sm-12>
-          <h3 class="font-weight-normal">
-            <i class="fa fa-qrcode pr-1"></i> Código QR
-          </h3>
-        </ion-col>
-      </ion-icon>
-    </ion-row>
-    <ion-row>
-      <ion-icon>
-        <ion-col col-12 col-sm-12>
-          <hr class="hr-nival">
-        </ion-col>
-      </ion-icon>
-    </ion-row>
-    <ion-row>
-      <ion-col col-12 col-sm-12 class="ion-text-center" style="display: flex; justify-content: center">
-        <ngx-qrcode [elementType]="elementType" [errorCorrectionLevel]="correctionLevel" [value]="value"
-          alt="Demo QR Code" [width]="300" cssClass="bshadow"></ngx-qrcode>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+
+<ion-content *ngIf="validateSpinner else barra">
+  <ion-item lines="none" style="padding-top: 9px;">
+    <h3 class="font-weight-normal" class="fullNivalWidth">
+      <ion-icon name="qr-code-outline" class="fa-nival-bottom"></ion-icon> Código QR - {{this.nombre}}
+      <hr class="hr-nival">
+    </h3>
+  </ion-item>
+
+  <ion-card class="card">
+    <ion-card-content>
+      <ngx-qrcode [elementType]="elementType" [errorCorrectionLevel]="correctionLevel" [value]="value"
+        alt="Demo QR Code" [width]="300" cssClass="bshadow"></ngx-qrcode>
+    </ion-card-content>
+    <ion-item lines="none" style="padding-top: 9px;">
+        <ion-button (click)="goBack()" color="info" style="width: 100%;">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </ion-button>
+    </ion-item>
+  </ion-card>
+
+
 </ion-content>
 <ion-footer>
   <ion-toolbar>
   </ion-toolbar>
 </ion-footer>
+
+<ng-template #barra>
+  <ion-content>
+    <div class="spinnerA">
+      <span class="spinnerB">
+        <ion-spinner color="info" icon="spiral"></ion-spinner>
+      </span>
+    </div>
+  </ion-content>
+</ng-template>

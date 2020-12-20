@@ -14,15 +14,15 @@ export class EditEstudiantePage implements OnInit {
 
   public placeholder = "";
   public placeholderCodigo = "";
-  public placeholderCorreo ="";
+  public placeholderCorreo = "";
   public validate = true;
 
   private array = [];
 
   estudianteForm = new FormGroup({
-    codigoUnico: new FormControl('',[Validators.required, Validators.minLength(9)]),
-    estudiante: new FormControl('',[Validators.required, Validators.minLength(2)]),
-    email: new FormControl('',[Validators.required, Validators.email,this.matchEmail()])
+    codigoUnico: new FormControl('', [Validators.required, Validators.minLength(9)]),
+    estudiante: new FormControl('', [Validators.required, Validators.minLength(2)]),
+    email: new FormControl('', [Validators.required, Validators.email, this.matchEmail()])
   })
 
   constructor(
@@ -32,7 +32,7 @@ export class EditEstudiantePage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('informacion',this.infoUser);
+    console.log('informacion', this.infoUser);
     this.placeholder = this.infoUser.nombre;
     this.placeholderCodigo = this.infoUser.numero;
     this.placeholderCorreo = this.infoUser.correo;
@@ -42,56 +42,56 @@ export class EditEstudiantePage implements OnInit {
     this.array = this.infoUser.array;
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       let validacionDatos = false;
-      const { codigoUnico,estudiante,email } = this.estudianteForm.value;
+      const { codigoUnico, estudiante, email } = this.estudianteForm.value;
 
-      if(codigoUnico===this.placeholderCodigo&&estudiante===this.placeholder&&email===this.placeholderCorreo){
+      if (codigoUnico === this.placeholderCodigo && estudiante === this.placeholder && email === this.placeholderCorreo) {
         this.authService.showInfo('No se ha realizado ningún cambio');
-        this.validate=true
+        this.validate = true
         this.dialogRef.close();
-      }else{
+      } else {
         for (let i = 0; i < this.array.length; i++) {
-          if (this.array[i].nombre.toLowerCase() == estudiante.toLowerCase() && i !=this.infoUser.posicion) {
+          if (this.array[i].nombre.toLowerCase() == estudiante.toLowerCase() && i != this.infoUser.posicion) {
             validacionDatos = true;
             this.authService.showError('El estudiante ' + estudiante + ' ya está registrado en el curso');
             this.validate = true;
             break;
           }
-  
+
           if (this.array[i].codigoUnico == codigoUnico && i != this.infoUser.posicion) {
             validacionDatos = true;
             this.authService.showError('El código único ' + codigoUnico + ' ya se encuentra registrado');
             this.validate = true;
             break;
-          }else if (this.array[i].correo == email && i != this.infoUser.posicion) {
+          } else if (this.array[i].correo == email && i != this.infoUser.posicion) {
             validacionDatos = true;
             this.authService.showError('El correo electronico' + email + ' ya se encuentra registrado');
             this.validate = true;
             break;
           }
         }
-  
+
         if (validacionDatos) {
-  
+
         } else {
-          this.array[this.infoUser.posicion]['nombre']=estudiante;
-          this.array[this.infoUser.posicion]['codigoUnico']=codigoUnico;
-          this.array[this.infoUser.posicion]['correo']=email;
+          this.array[this.infoUser.posicion]['nombre'] = estudiante;
+          this.array[this.infoUser.posicion]['codigoUnico'] = codigoUnico;
+          this.array[this.infoUser.posicion]['correo'] = email;
 
           console.log(this.array);
 
-          console.log(this.infoUser.idNomina,this.infoUser.idMateria,this.array);
-          let update = this.authService.updateNominaEstudiante(this.infoUser.idNomina,this.infoUser.idMateria,this.array);
+          console.log(this.infoUser.idNomina, this.infoUser.idMateria, this.array);
+          this.authService.updateNominaEstudiante(this.infoUser.idNomina, this.infoUser.idMateria, this.array);
           //idNomina: any, idMateria: any, array: any
-          if(update){
-            this.validate=true
+
+          setTimeout(() => {
             this.dialogRef.close();
-          }else{
-            this.validate=true
-          }
+            this.validate = true;
+            this.authService.showUpdatedata();
+          }, 2000);
         }
       }
     } catch (error) {
@@ -103,14 +103,14 @@ export class EditEstudiantePage implements OnInit {
     this.dialogRef.close();
   }
 
-  limpiarNombre(){
+  limpiarNombre() {
     this.estudianteForm.patchValue({ estudiante: "" });
   }
 
   limpiarNumero() {
     this.estudianteForm.patchValue({ codigoUnico: "" });
   }
-  limpiarCorreo(){
+  limpiarCorreo() {
     this.estudianteForm.patchValue({ email: "" });
   }
 
@@ -118,7 +118,7 @@ export class EditEstudiantePage implements OnInit {
     return (control: AbstractControl): { [s: string]: boolean } => {
       // control.parent es el FormGroup
       if (control.parent) { // en las primeras llamadas control.parent es undefined
-        let dominio=control.value.split("@", 2);
+        let dominio = control.value.split("@", 2);
         //console.log(dominio[1],dominio.length);
         if (dominio[1] !== 'epn.edu.ec') {
           //console.log(control.value,'no pertenece al dominio');

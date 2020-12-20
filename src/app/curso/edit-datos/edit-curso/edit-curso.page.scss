@@ -1,15 +1,28 @@
 .example-container {
-  max-height: 55vh;
   max-width: 100%;
+  max-height: 55vh;
   overflow: auto;
 }
 
 table {
-  text-align: center !important;
   width: 100%;
 }
 
-.mat-header-cell {
+.mat-header-cell, .mat-footer-cell, .mat-cell {
+  box-sizing: border-box;
   text-align: center;
-  padding: 5px;
+  justify-content:center;
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+.nombre{
+  min-width: 200px;
+}
+
+.td-left{
+  text-align: left;
+  min-width: 150px;
+  padding-left: 5px;
+  padding-right: 5px;
 }

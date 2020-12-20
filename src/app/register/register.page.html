@@ -15,7 +15,11 @@
       <ion-img [src]="'../../assets/icon/logoNival.PNG'" id="logoRegister"></ion-img>
     </ion-row>
     <ion-row class="ion-margin-top">
-      <form [formGroup]="registerForm" class="input-modal">
+      <div *ngIf="validate else login">
+      </div>
+    </ion-row>
+    <ion-row class="ion-margin-top">
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
 
         <mat-form-field hintLabel='{{mensaje_nombre}}' appearance="standard" class="input-modal">
           <mat-label>Nombres</mat-label>
@@ -55,8 +59,12 @@
         </mat-form-field>
 
         <ion-button color="secondary" expand="block" class="ion-margin-top" size="small"
-          [disabled]="!registerForm.valid">Enviar</ion-button>
+          [disabled]="!registerForm.valid" type="submit">Enviar</ion-button>
       </form>
     </ion-row>
   </ion-grid>
 </ion-content>
+
+<ng-template #login>
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+</ng-template>

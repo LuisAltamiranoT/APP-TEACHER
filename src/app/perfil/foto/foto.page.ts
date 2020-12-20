@@ -91,11 +91,15 @@ export class FotoPage implements OnInit {
   addFoto() {
     this.validate = false;
     if (this.validImage && this.infoUser.data === 'no-image') {
-      let data = this.uploadImage.preAddAndUpdatePerfil(this.file, this.infoUser.array);
+      this.uploadImage.preAddAndUpdatePerfil(this.file, this.infoUser.array);
     } else {
       let data = this.uploadImage.preAddAndUpdatePerfil(this.file, this.infoUser.array);
       this.uploadImage.deleteImagePerfil(this.infoUser.data);
     }
+    setTimeout(() => {
+      this.closeModal();
+      this.authService.showUpdatedata();
+    }, 2000);
   }
 
 

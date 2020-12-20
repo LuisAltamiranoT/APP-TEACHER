@@ -2,12 +2,12 @@
     <ion-toolbar>
     </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding">
+<ion-content *ngIf="validateSpinner else barra">
     <ion-grid>
         <ion-row>
             <ion-col col-12 col-sm-12>
                 <h3>
-                    <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                    <ion-icon class="fa-nival-bottom" name="create-outline"></ion-icon>
                     Editar Curso
                 </h3>
                 <hr class="hr-nival">
@@ -16,14 +16,14 @@
         <ion-row>
             <ion-col col-12 col-sm-12>
                 <div class="bd-callout bd-callout-default w-100">
-                    <h2 id="dealing-with-specificity">
+                    <h3 id="dealing-with-specificity">
                         <mat-icon class="fa-nival" matSuffix>insert_photo</mat-icon> Foto
                         <a style="float: right;" (click)='openPhoto()'>
                             <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
                         </a>
-                    </h2>
+                    </h3>
                     <div class="text-center">
-                        <img [src]="photoSelected || '../../../assets/icon/clase.jpg'" fallimg class="img-fluid">
+                        <img [src]="photoSelected" fallimg="curso" class="img-fluid">
                     </div>
                 </div>
             </ion-col>
@@ -31,27 +31,27 @@
         <ion-row>
             <ion-col col-12 col-sm-12>
                 <div class="bd-callout bd-callout-default w-100" style="padding-bottom: 0px !important;">
-                    <h2 id="dealing-with-specificity">
-                        <mat-icon class="fa-nival" matSuffix>format_list_bulleted</mat-icon> Información:
-                    </h2>
+                    <h3 id="dealing-with-specificity">
+                        <ion-icon class="fa-nival" name="list-outline"></ion-icon> Información:
+                    </h3>
                     <form class="p-1 mt-1" [formGroup]="editCursoForm">
                         <input type="file" style="display: none;" #photoInput formControlName="image">
                         <ion-row>
-                            <ion-col col-12 col-sm-12 class="ion-text-center">
-                                <div>
-                                    <h3 class="font-weight-light pl-1" id="fontNival-p">
-                                        <strong>{{nombreMateria}}</strong></h3>
-                                </div>
+                            <ion-col col-12 col-sm-12>
+                                <h3 class="fondo">
+                                    <ion-icon name="folder-open" class="fa-nival-bottom" style="padding-right:  5px;">
+                                    </ion-icon>{{nombreMateria}}
+                                </h3>
                             </ion-col>
                         </ion-row>
                         <ion-row>
                             <ion-col col-12 col-sm-12>
                                 <h3 class="fondo">
-                                    <mat-icon class="fa-nival" matSuffix style="font-size: 18px;">folder_special
-                                    </mat-icon> Aula:
+                                    <ion-icon name="book" class="fa-nival-bottom" style="padding-right:  4px;">
+                                    </ion-icon> Aula:
                                     {{placeholderAula}}
                                     <a style="float: right;" (click)="openEditAulaModal()">
-                                        <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline">
+                                        <ion-icon class="fa-nival" name="create-outline">
                                         </ion-icon>
                                     </a>
                                 </h3>
@@ -60,11 +60,12 @@
                         <ion-row>
                             <ion-col col-12 col-sm-12>
                                 <h3 class="fondo">
-                                    <mat-icon class="fa-nival" matSuffix style="font-size: 18px;">person_add</mat-icon>
+                                    <ion-icon name="person" class="fa-nival-bottom" style="padding-right:  4px;">
+                                    </ion-icon>
                                     Agregar
                                     Estudiante:
                                     <a style="float: right;" (click)='openAddEstudianteModal()'>
-                                        <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                                        <ion-icon class="fa-nival-bottom" name="add"></ion-icon>
                                     </a>
                                 </h3>
                             </ion-col>
@@ -72,7 +73,8 @@
                         <ion-row>
                             <ion-col col-12 col-sm-12>
                                 <h3 class="fondo">
-                                    <mat-icon class="fa-nival" matSuffix style="font-size: 18px;">today</mat-icon>
+                                    <ion-icon name="today" class="fa-nival-bottom" style="padding-right:  4px;">
+                                    </ion-icon>
                                     Horario:
                                     <a style="float: right;" (click)="openEditHorarioModal()">
                                         <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline">
@@ -101,7 +103,7 @@
                     </ion-row>
                     <ion-row>
                         <ion-col col-12 col-sm-12>
-                            <div class="example-container mat-elevation-z3">
+                            <div class="example-container mat-elevation-z1">
                                 <table mat-table [dataSource]="dataSource2" #tabla1>
                                     <!-- Numero de fila -->
                                     <ng-container matColumnDef="fila">
@@ -122,19 +124,26 @@
                                         <th mat-header-cell *matHeaderCellDef> Imagen </th>
                                         <td class="px-1" mat-cell *matCellDef="let element, let i = index;">
                                             <a (click)='openImage(element.image)'>
-                                                <img mat-card-image class="avatarNivalStudent" src={{element.image}}
-                                                    alt="noImage">
+                                                <mat-card class="mat-elevation-z0">
+                                                    <div mat-card-avatar [style.background-image]="'url('+img+')'"
+                                                        class="avatarDiv">
+                                                        <div mat-card-avatar
+                                                            [style.background-image]="'url('+element.image+')'"
+                                                            class="avatarDiv">
+                                                        </div>
+                                                    </div>
+                                                </mat-card>
                                             </a>
                                         </td>
                                     </ng-container>
 
                                     <!-- Name Column -->
                                     <ng-container matColumnDef="nombre">
-                                        <th mat-header-cell *matHeaderCellDef> Nombre </th>
-                                        <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
-                                            <p class=" rounded p-1 mt-2">
+                                        <th class="nombre" mat-header-cell *matHeaderCellDef> Nombre </th>
+                                        <td class="td-left" mat-cell *matCellDef="let element, let l = index;">
+                                            <h4 class=" rounded p-1 mt-2">
                                                 {{element.nombre}}
-                                            </p>
+                                            </h4>
                                         </td>
                                     </ng-container>
 
@@ -142,9 +151,9 @@
                                     <ng-container matColumnDef="correo">
                                         <th mat-header-cell *matHeaderCellDef> Email </th>
                                         <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
-                                            <p class="rounded p-1 mt-2" style="text-align: left;">
+                                            <h4 class="rounded p-1 mt-2" style="text-align: left;">
                                                 {{element.correo}}
-                                            </p>
+                                            </h4>
                                         </td>
                                     </ng-container>
 
@@ -153,13 +162,11 @@
                                         <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
                                             <a class="text-info p-1"
                                                 (click)="openEditEstudianteModal(element.nombre,element.correo,element.codigoUnico,l)">
-                                                <ion-icon class="fa-nival" style="font-size: 20px;"
-                                                    name="create-outline"></ion-icon>
+                                                <ion-icon class="fa-nival-bottom" name="create-outline" style="padding-right: 10px;"></ion-icon>
                                             </a>
                                             <a class="text-danger p-1"
                                                 (click)=" openDeleteEstudianteModal(element.nombre,l)">
-                                                <mat-icon class="fa-nival" style="color: red;" matSuffix>delete_forever
-                                                </mat-icon>
+                                                <ion-icon name="trash-outline" class="fa-nival-bottom" color="red"></ion-icon>
                                             </a>
                                         </td>
                                     </ng-container>
@@ -177,6 +184,16 @@
         </ion-row>
     </ion-grid>
 </ion-content>
+
+<ng-template #barra>
+    <ion-content>
+      <div class="spinnerA">
+        <span class="spinnerB">
+          <ion-spinner color="info" icon="spiral"></ion-spinner>
+        </span>
+      </div>
+    </ion-content>
+  </ng-template>
 <ion-footer>
     <ion-toolbar>
     </ion-toolbar>

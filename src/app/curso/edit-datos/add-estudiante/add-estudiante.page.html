@@ -1,5 +1,5 @@
 <form [formGroup]="estudianteForm" (ngSubmit)="onClick()">
-  <h2 mat-dialog-title class="pb-1">Agregar Estudiante:</h2>
+  <h3 mat-dialog-title class="pb-1"><strong> Estudiante:</strong></h3>
   <div *ngIf="validate else barra">
   </div>
   <mat-form-field hintLabel="Codigo único otorgado por la institución" appearance="standard" class="fullNivalWidth">

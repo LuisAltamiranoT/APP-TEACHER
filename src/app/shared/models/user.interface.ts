@@ -36,29 +36,29 @@ export interface Materia {
         horario?: [{
             dia?: string,
             posicion?: number,
-            hora?: string
+            hora?:string
         }]
     }]
 }
 
 export interface NominaObligatoria {
-    estado?: string,// Identifica si el estudiante puede agregar datos como presente,atraso
-    uidCurso?: string,// Id del curso
-    uidProfesor?: string,// Id del profesor
-    uidMateria?: string,// Id de la materia
+    estado?:string,//identifica si el estudiante puede agregar datos como presente,atraso
+    uidCurso?: string,//id del curso
+    uidProfesor?:string,//id del profesor
+    uidMateria?:string,// id de la materia
     nomina?: [{
         codigoUnico?: string,
         nombre?: string,
-        correo?: string,
-        image?: string
-        uidUser?: string, // Tiene noRegister si aun el estudiante ha leido por primera vez el codigo qr
+        correo?:string,
+        image?:string
+        uidUser?:string, //tiene noRegister si aun el estudiante ha leido por primera vez el codigo qr
         asistencia?: [{
             fecha?: string,
-            dia?: string,
+            dia?:string,
             presente?: boolean,
             atraso?: boolean,
             falta?: boolean,
-            estado?: boolean
+            estado?:boolean
         }]
     }]
 }
@@ -67,14 +67,15 @@ export interface NominaObligatoria {
 export interface NominaEstuiantes {
     codigoUnico?: string,
     nombre?: string,
-    correo?: string,
+    correo?:string,
     asistencia?: {
         fecha?: string,
-        dia?: string
+        dia?:string
         presente?: boolean,
         atraso?: boolean,
         falta?: boolean
     }
+
 }
 
 export interface Curso {

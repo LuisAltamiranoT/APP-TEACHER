@@ -124,8 +124,12 @@ export class AddCursoPage implements OnInit {
 
 
   ngOnDestroy() {
-    this.stateImage.unsubscribe();
-    this.suscripcion1.unsubscribe();
+    if(this.stateImage){
+      this.stateImage.unsubscribe();
+    }
+    if(this.suscripcion1){
+      this.suscripcion1.unsubscribe();
+    }
   }
 
   displayedColumns = ['hora', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
@@ -417,7 +421,7 @@ export class AddCursoPage implements OnInit {
                 nombre: Nombre,
                 codigoUnico: CodigoUnico,
                 correo: Correo,
-                image: 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680',
+                image: '',
                 uidUser: 'noRegister',
                 asistencia: []
               }

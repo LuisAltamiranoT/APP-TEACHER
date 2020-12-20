@@ -54,21 +54,21 @@ export class EliminarCursoPage implements OnInit {
     console.log('adsasdf', this.materiaSeleccionada, this.infoUser);
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       if (this.image != '') {
         this.UploadImageService.deleteImageCurso(this.image);
       }
+      
       this.authService.deleteNomina(this.idData, this.nomina);
-      let dat = this.authService.deleteCurso(this.idData, this.materiaSeleccionada);
-      if (dat) {
-        this.validate = true;
-        this.dialogRef.close();
-      } else {
-        this.validate = true;
-      }
+      this.authService.deleteCurso(this.idData, this.materiaSeleccionada);
 
+      setTimeout(() => {
+        this.dialogRef.close();
+        this.validate = true;
+        this.authService.showUpdatedata();
+      }, 2000);
 
     } catch (error) {
 

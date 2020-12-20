@@ -36,7 +36,7 @@ export class EditAulaPage implements OnInit {
       nombreAula: this.placeholderAula */
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       const { aula } = this.aulaForm.value;
@@ -45,13 +45,13 @@ export class EditAulaPage implements OnInit {
       this.infoUser.array[0].cursos[this.infoUser.index]['aula'] = aula;
       console.log(this.infoUser.arrray);
 
-      const dat = await this.authService.updateCursoAula(this.infoUser.idMateria, this.infoUser.array);
-      if (dat) {
-        this.dialogRef.close();
-      } else {
-        this.validate = true;
-      }
+      this.authService.updateCursoAula(this.infoUser.idMateria, this.infoUser.array);
 
+      setTimeout(() => {
+        this.dialogRef.close();
+        this.validate = true;
+        this.authService.showUpdatedata();
+      }, 2000);
     } catch (error) {
       this.authService.showError(error);
     }

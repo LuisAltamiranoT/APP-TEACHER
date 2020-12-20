@@ -15,6 +15,7 @@ import { IonicModule } from '@ionic/angular';
 import { EditImagePageRoutingModule } from './edit-image-routing.module';
 
 import { EditImagePage } from './edit-image.page';
+import { NgFallimgModule } from 'ng-fallimg';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { EditImagePage } from './edit-image.page';
     MatInputModule,
     MatIconModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    NgFallimgModule
   ],
   declarations: [EditImagePage]
 })

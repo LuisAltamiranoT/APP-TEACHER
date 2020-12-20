@@ -1,31 +1,28 @@
 .example-container {
-    min-width: 83.5vw;
-    max-height: 77vh;
-    overflow: auto;
-  }
-  
-  table {
-    text-align: center !important;
-    width: 100%;
-  }
-  
-  .mat-header-cell {
-    text-align: center;
-    padding: 5px;
-  }
-  
-  .busqueda1{
-    font-size: 14px;
-    width: 60%;
-    padding-left: 1rem;
-    padding-top: 1rem;
-  }
-  
-  .avatarNival{
-    vertical-align: middle;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    padding: 10px;
-  }
+  max-width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-header-cell, .mat-footer-cell, .mat-cell {
+  box-sizing: border-box;
+  text-align: center;
+  justify-content:center;
+  padding-left: 1px;
+  padding-right: 1px;
+}
+
+.nombre{
+  min-width: 150px;
+}
+
+.td-left{
+  text-align: left;
+  min-width: 150px;
+  padding-left: 5px;
+  padding-right: 5px;
+}

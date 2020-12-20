@@ -42,15 +42,17 @@ export class MateriaPage implements OnInit {
     this.suscripcion1.unsubscribe();
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       const { materia } = this.materiaForm.value;
-      const dat = await this.authService.createMateria(materia, this.nombreProfesor, this.image);
-      if (dat) {
+      this.authService.createMateria(materia, this.nombreProfesor, this.image);
+      setTimeout(() => {
+        this.dialogRef.close();
         this.materiaForm.patchValue({ materia: "" });
         this.validate = true;
-      }
+        this.authService.showUpdatedata();
+      }, 2000);
     } catch (error) {
 
     }

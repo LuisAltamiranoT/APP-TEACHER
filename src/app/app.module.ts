@@ -39,6 +39,7 @@ import { GuardGuard } from 'src/app/service/guard/guard.guard';
 
 import { NavbarPage } from './navbar/navbar.page';
 import { FooterPage } from './footer/footer.page';
+import { NgFallimgModule } from 'ng-fallimg';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,13 @@ import { FooterPage } from './footer/footer.page';
     MatTableModule,
     MatCardModule,
     MatCheckboxModule,
-    NgxQRCodeModule
+    NgxQRCodeModule,
+    NgFallimgModule.forRoot({
+      default:'assets/icon/withoutUser.jpg',
+      perfil:'assets/icon/withoutUser.jpg',
+      curso:'assets/icon/clase.jpg',
+      aqui:'assets/icon/aqui.jpg'
+    }),
   ],
   providers: [
     AuthService,

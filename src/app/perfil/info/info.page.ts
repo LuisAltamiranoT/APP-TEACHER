@@ -36,16 +36,16 @@ export class InfoPage implements OnInit {
 
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       const { info } = this.infoForm.value;
-      const dat = await this.authService.updateDescripcion(info);
-      if (dat) {
+      this.authService.updateDescripcion(info);
+      setTimeout(() => {
         this.dialogRef.close();
-      } else {
         this.validate = true;
-      }
+        this.authService.showUpdatedata();
+      }, 2000);
     } catch (error) {
       this.authService.showError(error);
     }

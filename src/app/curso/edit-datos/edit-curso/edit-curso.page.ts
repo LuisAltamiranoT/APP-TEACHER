@@ -27,6 +27,10 @@ import { ViewImagePage } from '../../view-image/view-image.page';
   styleUrls: ['./edit-curso.page.scss'],
 })
 export class EditCursoPage implements OnInit {
+  //valida la ceacion de la tabla
+  validateSpinner: boolean = false;
+
+  img='../../../../assets//icon/withoutUser.jpg';
   //manejor de tablas 
   @ViewChild(MatTable) tabla1: MatTable<any>;
   //array de la nomina de los estudiantes 
@@ -39,6 +43,8 @@ export class EditCursoPage implements OnInit {
   public dataId: any;
   //almacenar nomina del estudiante
   public idIndexCurso: any;
+
+  historial:any[]=[];
 
 
   public dataNominaCurso: any;
@@ -118,6 +124,9 @@ export class EditCursoPage implements OnInit {
     this.suscripcion1 = this.authService.getDataNominaCursoId(idMateria, idNomina).subscribe((data) => {
       this.nominaVista.length = 0;
       const dataNomina: any = data.payload.data();
+      
+      this.historial=dataNomina.historial;
+      console.log('datos de la nomina',dataNomina,this.historial);
       //'codigoUnico','image','correo','nombre'
       dataNomina.nomina.forEach((dataMateria: any) => {
         this.nominaVista.push({
@@ -129,10 +138,12 @@ export class EditCursoPage implements OnInit {
           asistencia: dataMateria.asistencia
         })
       });
+      console.log(this.nominaVista)
       this.dataSource2 = new MatTableDataSource(this.nominaVista);
       this.tabla1.renderRows();
     });
     console.log(this.nominaVista);
+    this.validateSpinner=true;
   }
 
   openDeleteEstudianteModal(nombre: any, posicion: any) {
@@ -163,7 +174,8 @@ export class EditCursoPage implements OnInit {
     let data = {
       idMateria: this.idMateria,
       idCurso: this.idNomina,
-      array: this.nominaVista
+      array: this.nominaVista,
+      historial:this.historial
     }
     this.openMaterial1(AddEstudiantePage, data);
   }
@@ -189,7 +201,7 @@ export class EditCursoPage implements OnInit {
   }
 
   openPhoto() {
-    if (this.photoSelected != " ") {
+    if (this.photoSelected !="") {
       let data = {
         image: this.photoSelected,
         idMateria: this.idMateria,
@@ -197,7 +209,7 @@ export class EditCursoPage implements OnInit {
         arrayCompleto: this.dataMateria,
       }
       this.ventana.open(EditImagePage,
-        { width: ' 25rem', data: data }).afterClosed().subscribe(item => {
+        { width: ' 25rem', data: data,panelClass: 'myapp-no-padding-dialog2'}).afterClosed().subscribe(item => {
         });
     } else {
       let data = {
@@ -207,7 +219,7 @@ export class EditCursoPage implements OnInit {
         arrayCompleto: this.dataMateria,
       }
       this.ventana.open(EditImagePage,
-        { width: ' 25rem', data: data }).afterClosed().subscribe(item => {
+        { width: ' 25rem', data: data,panelClass: 'myapp-no-padding-dialog2'}).afterClosed().subscribe(item => {
         });
     }
   }
@@ -216,18 +228,18 @@ export class EditCursoPage implements OnInit {
 
   openMaterial(component: any) {
     this.ventana.open(component,
-      { width: ' 25rem' }).afterClosed().subscribe(item => { });
+      { width: ' 25rem',panelClass: 'myapp-no-padding-dialog2' }).afterClosed().subscribe(item => { });
   }
 
   openMaterial1(component: any, info: any) {
     this.ventana.open(component,
-      { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+      { width: ' 25rem', data: info,panelClass: 'myapp-no-padding-dialog2' }).afterClosed().subscribe(item => {
       });
   }
 
   openMaterial2(component: any, info: any) {
     this.ventana.open(component,
-      { data: info }).afterClosed().subscribe(item => {
+      { data: info,panelClass: 'myapp-no-padding-dialog' }).afterClosed().subscribe(item => {
         this.getMateria(this.idMateria);
         this.getNominaCurso(this.idMateria, this.idNomina);
       });
@@ -239,9 +251,9 @@ export class EditCursoPage implements OnInit {
   }
 
   openImage(image: any) {
-    if (image != 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680') {
+    if (image != '') {
       this.ventana.open(ViewImagePage,
-        { data: image }).afterClosed().subscribe(item => {
+        { data: image,panelClass: 'myapp-no-padding-dialog' }).afterClosed().subscribe(item => {
         });
     } else {
       this.authService.showInfo('El estudiante no dispone de una imagen de perfil.');

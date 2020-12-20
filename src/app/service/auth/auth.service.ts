@@ -11,7 +11,7 @@ import * as moment from 'moment';
 
 import { RoleValidator } from 'src/app/shared/helpers/rolValidator';
 
-import { switchMap, first } from 'rxjs/operators';
+import { switchMap, map, first } from 'rxjs/operators';
 
 ///observable y subject permite ejecutar una acción al cumplirse una condición
 import { Observable, of, Subject } from 'rxjs';
@@ -19,6 +19,8 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 
 import { User, Curso, Materia, Nomina, NominaObligatoria, MateriaRegister } from 'src/app/shared/models/user.interface';
 import { Router } from '@angular/router';
+
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -29,16 +31,26 @@ export class AuthService extends RoleValidator {
   private estadoImgenUpdate = new Subject<void>();
   public finalizoImage$ = this.estadoImgenUpdate.asObservable();
 
+  public stateScanner = new Subject<any>();
+
+  private MEDIA_STORAGE_PATH = 'imageCurso';
+  private MEDIA_STORAGE_PATH_PERFIL = 'perfil';
+
   private dataUser: any;
   public user$: Observable<User>;
+
+  //bloquea la navegacion hacia el login
+  public stateUser$: Observable<any>;
 
   constructor(
     public afAuth: AngularFireAuth,
     private toastr: ToastController,
     private afs: AngularFirestore,
-    public router: Router
+    public router: Router,
+    private storage: AngularFireStorage
   ) {
     super();
+
 
     // Es utilizado en el guard
     this.user$ = this.afAuth.authState.pipe(
@@ -52,6 +64,9 @@ export class AuthService extends RoleValidator {
         return of(null);
       })
     )
+
+    this.stateUser$ = this.afAuth.authState.pipe(map(auth => auth));
+
   }
 
   // INICIO DE SESIÓN        
@@ -63,23 +78,28 @@ export class AuthService extends RoleValidator {
     try {
       return this.afAuth.sendPasswordResetEmail(email);
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
 
   async sendVerificationEmail(): Promise<void> {
-    return (await this.afAuth.currentUser).sendEmailVerification();
+    try {
+      return (await this.afAuth.currentUser).sendEmailVerification();
+    }
+    catch (error) {
+      this.showError('Verifica los datos. Algo salio mal');
+    }
   }
 
   async login(email: string, password: string): Promise<User> {
     try {
       await this.afAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      const { user } = await this.afAuth.signInWithEmailAndPassword(email,password);
+      const { user } = await this.afAuth.signInWithEmailAndPassword(email, password);
       await this.updateUserData(user);
       return user;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -89,34 +109,35 @@ export class AuthService extends RoleValidator {
       await this.afAuth.signOut();
       this.router.navigate(['home']);
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-  //actualiza la informacion de email verificado
   private async updateUserData(user: User) {
-      const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
-      const data: User = {
-        uid: user.uid,
-        email: user.email,
-        emailVerified: user.emailVerified
-      };
-      //si existe que realixe merge
-      return await userRef.set(data, { merge: true });
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
+    const data: User = {
+      uid: user.uid,
+      email: user.email,
+      emailVerified: user.emailVerified
+    };
+    //si existe que realixe merge
+    return await userRef.set(data, { merge: true });
   }
-    //Registro profesor
-    async register(email: string, password: string, nombre: string, apellido: string): Promise<User> {
-      try {
-        const { user } = await this.afAuth.createUserWithEmailAndPassword(email,password);
-        if(user){
-          await this.registerDataUser(user, nombre, apellido);
-        }
-        await this.sendVerificationEmail();
-        return user;
-      } catch (error) {
-        this.showError(error);
+
+  //Registro profesor
+  async register(email: string, password: string, nombre: string, apellido: string): Promise<User> {
+    try {
+      const { user } = await this.afAuth.createUserWithEmailAndPassword(email, password);
+      if (user) {
+        await this.registerDataUser(user, nombre, apellido);
       }
+      await this.sendVerificationEmail();
+      return user;
+    } catch (error) {
+      this.showError('Verifica los datos. Algo salio mal');
     }
+  }
+
 
   private async registerDataUser(user: User, nombre: string, apellido: string) {
     try {
@@ -128,13 +149,13 @@ export class AuthService extends RoleValidator {
         email: user.email,
         emailVerified: user.emailVerified,
         role: 'ADMIN',
-        photoUrl:'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680'
+        photoUrl: ''
       };
 
       return await userRef.set(data, { merge: true });
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -144,10 +165,9 @@ export class AuthService extends RoleValidator {
       let db = this.afs.doc<User>(`users/${this.dataUser}`).snapshotChanges();
       return db;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
-
 
   public reauthenticate = (currentPassword) => {
     var user = firebase.auth().currentUser;
@@ -170,32 +190,55 @@ export class AuthService extends RoleValidator {
       data = 1;
       return data;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
       return data = 0;
     }
   }
 
-  
-   //Delete user
-   public async updateAcoountUser(oldPass: string): Promise<Number> {
-    //estado cero no se logro, estado 1 se ha logrado 
-    let data:number;
-    try{
+
+  //Delete user
+  public async updateAcoountUser(oldPass: string, imagen: any, cursos: any): Promise<Number> {
+    let data: number;
+    try {
       let userAccount = firebase.auth().currentUser;
       await this.reauthenticate(oldPass);
       await this.updateEstadoEliminar();
+      
+
+      if (imagen != '') {
+        let splitted = imagen.split("perfil%2F")[1];
+        let name = splitted.split("?alt")[0];
+        const fileref = this.storage.ref(`${this.MEDIA_STORAGE_PATH_PERFIL}/${name}`);
+        fileref.delete();
+      } 
+
+      if (cursos.length != 0) {
+        cursos.forEach(element => {
+          if (element.image != '') {
+            let splitted = element.image.split("imageCurso%2F")[1];
+            let name = splitted.split("?alt")[0];
+            const fileref = this.storage.ref(`${this.MEDIA_STORAGE_PATH}/${name}`);
+            fileref.delete();
+          }
+        });
+      }
+
       await userAccount.delete();
-      this.showSuccess('Usted ha eliminado su cuenta de EASY-AC-NIVAL');
+      this.showSuccess('Usted ha eliminado su cuenta de NIVAL EASY ATTENDANCE CONTROL');
       this.logout();
-      return data=1;
-    }catch(error){
-      this.showError(error);
+      return data = 1;
+    } catch (error) {
+      this.showError('Verifica los datos. Algo salio mal');
       return data = 0;
     }
   }
 
-   //nombre
-   public async updateEstadoEliminar() {
+
+
+
+
+  //nombre
+  public async updateEstadoEliminar() {
     try {
       const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${this.dataUser}`);
       const data = {
@@ -206,10 +249,9 @@ export class AuthService extends RoleValidator {
       return { dataUpdate };
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
-
 
   //descripcion
   public async updateDescripcion(valor: string) {
@@ -218,12 +260,13 @@ export class AuthService extends RoleValidator {
       const data: User = {
         info: valor
       };
-      const dataUpdate = await userRef.set(data, { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
+      await userRef.set(data, { merge: true });
+      //const dataUpdate = await userRef.set(data, { merge: true });
+      //this.showUpdatedata();
+      //return { dataUpdate };
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -234,12 +277,10 @@ export class AuthService extends RoleValidator {
       const data: User = {
         nombre: valor
       };
-      const dataUpdate = await userRef.set(data, { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
-
+      await userRef.set(data, { merge: true });
+      //this.showUpdatedata();
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -250,12 +291,10 @@ export class AuthService extends RoleValidator {
       const data: User = {
         apellido: valor
       };
-      const dataUpdate = await userRef.set(data, { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
-
+      await userRef.set(data, { merge: true });
+      //this.showUpdatedata();
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -266,31 +305,36 @@ export class AuthService extends RoleValidator {
       const data: User = {
         oficina: valor
       };
-      const dataUpdate = await userRef.set(data, { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
+      await userRef.set(data, { merge: true });
+      //const dataUpdate = await userRef.set(data, { merge: true });
+      //this.showUpdatedata();
+      //return { dataUpdate };
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
+
 
   //anio
   public async updateAnioLectivo(valor: string, valor2: string) {
     try {
+    
+
       console.log(valor, valor2);
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${this.dataUser}`);
       const data: User = {
         anioInicio: moment(valor).format('DD-MM-YYYY'),
         anioFin: moment(valor2).format('DD-MM-YYYY')
       };
-      const dataUpdate = await userRef.set(data, { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
+
+      await userRef.set(data, { merge: true });
+      //this.showUpdatedata();
+      //return { dataUpdate };
 
     } catch (error) {
-      console.log(error);
-      this.showError(error);
+      //console.log(error);
+      //this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -301,7 +345,7 @@ export class AuthService extends RoleValidator {
       let db = this.afs.doc<Materia>(`users/${this.dataUser}`).collection('materias').snapshotChanges();
       return db;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -315,11 +359,12 @@ export class AuthService extends RoleValidator {
         uidProfesor: this.dataUser,
         cursos: []
       }
-      const create = await this.afs.doc<Materia>(`users/${this.dataUser}`).collection('materias').add(data);
-      this.showUpdatedata();
-      return create;
+      await this.afs.doc<Materia>(`users/${this.dataUser}`).collection('materias').add(data);
+      //const create = await this.afs.doc<Materia>(`users/${this.dataUser}`).collection('materias').add(data);
+      //this.showUpdatedata();
+      //return create;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -329,11 +374,12 @@ export class AuthService extends RoleValidator {
       const update: Materia = {
         nombre: data
       };
-      const dataUpdate = await userRef.set(update, { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
+      await userRef.set(update, { merge: true });
+      //const dataUpdate = await userRef.set(update, { merge: true });
+      //this.showUpdatedata();
+      //return { dataUpdate };
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -347,12 +393,12 @@ export class AuthService extends RoleValidator {
       const dataUpdate = await userRef.set(update, { merge: true });
       return { dataUpdate };
     } catch (error) {
-      this.showError(error);
+      //this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-   //actualizar nombre e profesor en materias
-   public async updateMateriaFotoProfesor(documentId: string, data: any) {
+  //actualizar nombre e profesor en materias
+  public async updateMateriaFotoProfesor(documentId: string, data: any) {
     try {
       const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(documentId);
       const update: Materia = {
@@ -361,83 +407,80 @@ export class AuthService extends RoleValidator {
       const dataUpdate = await userRef.set(update, { merge: true });
       return { dataUpdate };
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-  
+
   //editar aula
   public async updateCursoAula(documentId: any, data: any) {
     try {
       const dataRef: AngularFirestoreDocument<Materia> = this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(documentId);
-      const dataUpdate = await dataRef.set(data[0], { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
+      await dataRef.set(data[0], { merge: true });
+      //const dataUpdate = await dataRef.set(data[0], { merge: true });
+      //this.showUpdatedata();
+      //return { dataUpdate };
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
       //console.log(error);
     }
   }
 
-    //actualizar curso horario
-    public async updateImageCurso(curso:any, idMateria: any) {
-      try {
-        const dataRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria);
-        const dataUpdate = await dataRef.set(curso[0], { merge: true });
-        this.estadoImgenUpdate.next();
-        this.showUpdatedata();
-        return { dataUpdate };
-      } catch (error) {
-        this.showError(error);
-      }
+  //actualizar curso horario
+  public async updateImageCurso(curso: any, idMateria: any) {
+    try {
+      const dataRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria);
+      const dataUpdate = await dataRef.set(curso[0], { merge: true });
+      this.estadoImgenUpdate.next();
+      this.showUpdatedata();
+      //return { dataUpdate };
+    } catch (error) {
+      this.showError('Verifica los datos. Algo salio mal');
     }
+  }
 
-  public async delecteMateria(documentId:any):Promise<number>{
+  public async delecteMateria(documentId: any) {
     try {
       await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(documentId).delete();
-      this.showDeletedata();
-      return 1;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-   //eliminar estudiante
-   public async deleteCurso(idMateria: any,ArrayCurso:any) {
+  //eliminar estudiante
+  public async deleteCurso(idMateria: any, ArrayCurso: any) {
     try {
-      const create = await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).update({cursos: firebase.firestore.FieldValue.arrayRemove(ArrayCurso)});
-      this.showDeletedata();
-      return create;
+      await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).update({ cursos: firebase.firestore.FieldValue.arrayRemove(ArrayCurso) });
+      //this.showDeletedata();
+      //return create;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-//deleteNomina
-  public async deleteNomina(documentId:any,idNomina:any):Promise<number>{
+  //deleteNomina
+  public async deleteNomina(documentId: any, idNomina: any) {
     try {
       await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(documentId).collection('nomina').doc(idNomina).delete();
-      return 1;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-
-  async updateNominaUnionAsistencia(idMateria:any, idNomina:any,arrayTemp2:any){
+  async updateNominaUnionAsistencia(idMateria: any, idNomina: any, arrayTemp2: any) {
     try {
-      const userRef =  this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina);
+      const userRef = this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina);
       const data = {
         nomina: arrayTemp2
       };
-      let inf=await userRef.set(data, { merge: true });
+      let inf = await userRef.set(data, { merge: true });
       this.showUpdatedata();
       return inf;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
-    
+
   }
 
 
@@ -452,10 +495,9 @@ export class AuthService extends RoleValidator {
       this.estadoImgenUpdate.next();
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
-
   //imagen curso
   public async updatePhotoCurso(valor: any, idCurso: any) {
     try {
@@ -467,9 +509,10 @@ export class AuthService extends RoleValidator {
       this.estadoImgenUpdate.next();
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
+
 
   //crear curso
   public async createCurso(listCurso: any, idMateria: any) {
@@ -481,7 +524,7 @@ export class AuthService extends RoleValidator {
       await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).set(datos, { merge: true });
       this.estadoImgenUpdate.next();
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
@@ -493,54 +536,55 @@ export class AuthService extends RoleValidator {
         uidCurso: idCurso,
         uidProfesor: this.dataUser,
         nomina: nomina,
-        historial:[],
-        numeroAlmacenado:'0'
+        historial: [],
+        numeroAlmacenado: '0',
+        estado: 'presente',
+        code: ''
       }
       const create = await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').add(nominaCurso);
       return create;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
   //agregar estudiante en nomina segun el id del curso
-  public async addEstudiante(idMateria: any,idNomina:any, valor: any){
+  public async addEstudiante(idMateria: any, idNomina: any, valor: any) {
     try {
-      const create = await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).update({nomina: firebase.firestore.FieldValue.arrayUnion(valor)});
-      this.showUpdatedata();
-      return create;
-      
+      await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).update({ nomina: firebase.firestore.FieldValue.arrayUnion(valor) });
+      //this.showUpdatedata();
+      //return create;
+
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-
   //eliminar estudiante
-  public async deleteEstudiante(idMateria: any, idNomina: any,ArrayEstudiante:any) {
+  public async deleteEstudiante(idMateria: any, idNomina: any, ArrayEstudiante: any) {
     try {
-      const create = await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).update({nomina: firebase.firestore.FieldValue.arrayRemove(ArrayEstudiante)});
-      this.showDeletedata();
-      return create;
+      await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).update({ nomina: firebase.firestore.FieldValue.arrayRemove(ArrayEstudiante) });
+      //this.showDeletedata();
+      //return create;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
 
 
   //actualizar horario
-  public async updateHorario(horario:any, idMateria: any) {
+  public async updateHorario(horario: any, idMateria: any) {
     try {
       const dataRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria);
-      const dataUpdate = await dataRef.set(horario[0], { merge: true });
-      this.showUpdatedata();
-      return { dataUpdate };
+      await dataRef.set(horario[0], { merge: true });
+      //const dataUpdate = await dataRef.set(horario[0], { merge: true });
+      //this.showUpdatedata();
+      //return { dataUpdate };
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
-
 
   //Obtener la materia con el id
   public getMateriaId(id: any) {
@@ -548,30 +592,31 @@ export class AuthService extends RoleValidator {
       let db = this.afs.doc<Curso>(`users/${this.dataUser}`).collection('materias').doc(id).snapshotChanges();
       return db;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
+
   //actualizar nomina
-  public async updateNomina(idNomina: any, idMateria: any, array: any, estado: any,acceso:any,numeroAlmacenado:any,historial:any): Promise<void> {
+  public async updateNomina(idNomina: any, idMateria: any, array: any, estado: any, acceso: any, numeroAlmacenado: any, historial: any) {
     try {
       let data = {
-        numeroAlmacenado:numeroAlmacenado,
-        historial:historial,
-        code:acceso,
+        numeroAlmacenado: numeroAlmacenado,
+        historial: historial,
+        code: acceso,
         estado: estado,
         nomina: array
       }
-      let db = await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).set(data, { merge: true });
-      this.showUpdatedata();
-      return db;
+      await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).set(data, { merge: true });
+      //this.showUpdatedata();
+      //return 10;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
   //actualizar estado actual
-  public async updateNominaEstado(idNomina: any, idMateria: any,estado: any): Promise<void> {
+  public async updateNominaEstado(idNomina: any, idMateria: any, estado: any): Promise<void> {
     try {
       let data = {
         estado: estado
@@ -580,51 +625,62 @@ export class AuthService extends RoleValidator {
       this.showUpdatedata();
       return db;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-   //actualizar estado actual
-   public async updateNominaEstadoQR(idNomina: any, idMateria: any,estado: any,acceso:any,historial:any): Promise<void> {
+
+  //actualizar estado actual
+  public async updateNominaEstadoQR(idNomina: any, idMateria: any, acceso: any, historial: any) {
     try {
       let data = {
-        code:acceso,
-        estado: estado,
-        historial:historial
+        code: acceso,
+        historial: historial
       }
       let db = await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).set(data, { merge: true });
       this.showUpdatedata();
       return db;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
-
-   //actualizar estudiante
-   public async updateNominaEstudiante(idNomina: any, idMateria: any, array: any): Promise<void>{
+  //actualizar nomina
+  public async updateNominaAnterior(idNomina: any, idMateria: any, array: any) {
     try {
       let data = {
         nomina: array
       }
-      let db = await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).set(data, { merge: true });
-      this.showUpdatedata();
-      return db;
+      await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).set(data, { merge: true });
+      //this.showUpdatedata();
+      //return 10;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 
+  //actualizar estudiante
+  public async updateNominaEstudiante(idNomina: any, idMateria: any, array: any): Promise<void> {
+    try {
+      let data = {
+        nomina: array
+      }
+      await this.afs.doc(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).set(data, { merge: true });
+      //this.showUpdatedata();
+      //return db;
+    } catch (error) {
+      this.showError('Verifica los datos. Algo salio mal');
+    }
+  }
   //Obtener la nomina del curso
   public getDataNominaCursoId(idMateria: any, idNomina: any) {
     try {
       let db = this.afs.doc<NominaObligatoria>(`users/${this.dataUser}`).collection('materias').doc(idMateria).collection('nomina').doc(idNomina).snapshotChanges();
       return db;
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
-
 
   //Obtener asistencia de todos por fecha
   public getDataAsistencia(idCurso: any, dataAsistencia: any) {
@@ -633,7 +689,7 @@ export class AuthService extends RoleValidator {
       return consulta;
 
     } catch (error) {
-      this.showError(error);
+      this.showError('Verifica los datos. Algo salio mal');
     }
   }
 

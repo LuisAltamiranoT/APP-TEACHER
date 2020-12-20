@@ -1,13 +1,11 @@
 <form [formGroup]="photoForm" (ngSubmit)="addFoto()">
-  <h2 mat-dialog-title class="pb-1">Foto Curso:</h2>
+  <h3 mat-dialog-title class="pb-1"><strong>Foto Curso:</strong></h3>
   <div *ngIf="validate else barra">
   </div>
   <ion-grid>
     <ion-row>
       <ion-col col-12 col-sm-12 class="ion-text-center" style="display: flex; justify-content: center">
-        <ion-avatar class="avatarNival">
-          <img (click)="photoInput.click()" src="{{photoSelected}}" />
-        </ion-avatar>
+          <img (click)="photoInput.click()" src="{{photoSelected}}" fallimg="aqui"  />
       </ion-col>
     </ion-row>
   </ion-grid>

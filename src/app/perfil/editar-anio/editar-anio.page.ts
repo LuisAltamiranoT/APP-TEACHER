@@ -34,19 +34,20 @@ export class EditarAnioPage implements OnInit {
     return day !== 0 && day !== 6;
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       const { inicio } = this.anioForm.value;
       const { fin } = this.anioForm.value;
       console.log('inicio', inicio)
       if (Date.parse(inicio) < Date.parse(fin)) {
-        const dat = await this.authService.updateAnioLectivo(inicio, fin);
-        if (dat) {
+        this.authService.updateAnioLectivo(inicio, fin);
+        
+        setTimeout(() => {
           this.dialogRef.close();
-        }else{
           this.validate = true;
-        }
+          this.authService.showUpdatedata();
+        }, 2000);
       }
       else {
         this.authService.showInfo('La fecha de inicio debe ser menor a la fecha de fin');

@@ -1,0 +1,14 @@
+<form [formGroup]="nombreForm" (ngSubmit)="onClick()">
+  <h2 mat-dialog-title class="pb-1">¡Atención!</h2>
+  <h3 mat-dialog-title class="text-info pb-1 text-center">Antes de salir, debe guardar la asistencia</h3>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-sm-12>
+        <ion-button type="submit" expand="full" size="small" [disabled]="!nombreForm.valid">
+          <ion-icon name="checkmark-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
+

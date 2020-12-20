@@ -199,7 +199,7 @@
 }
 
 .bd-callout {
-    padding: 1rem;
+    padding: 0.4rem;
     margin-top: .25rem;
     margin-bottom: .25rem;
     border: 1px solid #eee;
@@ -239,6 +239,13 @@ p{
 
 .fa-nival{
     vertical-align: middle;
+    font-size: 20px;
+    //padding-bottom: 4px;
+}
+.fa-nival-bottom{
+  vertical-align: middle;
+  font-size: 20px;
+  padding-bottom: 4px;
 }
 
 #font-p{
@@ -273,7 +280,7 @@ a{
 
 .hr-nival{
   margin-top: 0.4rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
   border: 0;
   border-top: 1px solid rgba(0,0,0,.1);
 }
@@ -327,3 +334,67 @@ a{
 .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background, .mat-checkbox-disabled.mat-checkbox-indeterminate .mat-checkbox-background {
   background-color: cornflowerblue;
 }
+
+.avatarNival {    
+  border-radius: 50%;
+  width:140px !important;  
+  height : 140px !important;  
+  max-width: 140px !important;  //any size
+  max-height: 140px !important; //any size 
+}
+
+
+.avatarDiv{
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+ .example-card {
+    width: 100%;
+    text-align: center;
+  }
+
+  .mat-card-header .mat-card-title {
+    margin-top: 4px;
+}
+
+.spinnerA{
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+  
+.spinnerB{
+  width: 120px;
+}
+
+ion-spinner {
+  display: block;
+  margin: auto;
+  //transform: scale(3);
+}
+
+.myapp-no-padding-dialog .mat-dialog-container {
+  padding-top: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-bottom: 0px;
+}
+
+.myapp-no-padding-dialog2 .mat-dialog-container {
+  padding-top: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 5px;
+}
+
+.busqueda1{
+  font-size: 14px;
+  width: 60%;
+  padding-left: 1rem;
+  padding-top: -1rem;
+}
+
+

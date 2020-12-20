@@ -3,36 +3,37 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content *ngIf="validateSpinner else barra">
   <ion-grid>
     <ion-row>
-      <ion-col size="12" class="ion-text-center" style="display: flex; justify-content: center">
-        <ion-avatar class="avatarNival">
-          <img src="{{perfil}}" />
-        </ion-avatar>
+      <ion-col class="ion-text-center" style="display: flex; justify-content: center">
+        <div [style.background-image]="'url('+img+')'" class="avatarNival avatarDiv">
+          <div [style.background-image]="'url('+perfil+')'" class="avatarNival avatarDiv">
+          </div>
+        </div>
         <a>
-          <mat-icon class="fa-nival" matSuffix (click)="openPhoto()">add_photo_alternate</mat-icon>
+          <ion-icon class="fa-nival" name="image-outline" (click)="openPhoto()"></ion-icon>
         </a>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="12" class="ion-text-center">
         <div>
-          <h2 id="font-p">{{nombre+' '+ apellido}}</h2>
-          <p id="fontNival-p">{{correo}}</p>
+          <h3 id="font-p">{{nombre+' '+ apellido}}</h3>
+          <p id="fontNival-p" style="margin-top: -10px !important;">{{correo}}</p>
         </div>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="12">
         <div class="bd-callout bd-callout-default">
-          <h2>
-            <mat-icon class="fa-nival" matSuffix>person</mat-icon> Información:
-          </h2>
+          <h3>
+            <ion-icon class="fa-nival-bottom" name="person-sharp"></ion-icon> Información:
+          </h3>
           <div class="fondo">
             <h4> Descripción:
               <a style="float: right;" (click)="openInfoModal()">
-                <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                <ion-icon class="fa-nival" name="create-outline"></ion-icon>
               </a>
             </h4>
             <p id="fontNival-p">{{informacion}}</p>
@@ -40,7 +41,7 @@
           <div class="fondo">
             <h4> Nombres:
               <a style="float: right;" (click)="openNombreModal()">
-                <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                <ion-icon class="fa-nival" name="create-outline"></ion-icon>
               </a>
             </h4>
             <p id="fontNival-p">{{nombre}}</p>
@@ -48,7 +49,7 @@
           <div class="fondo">
             <h4> Apellidos:
               <a style="float: right;" (click)="openApellidoModal()">
-                <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                <ion-icon class="fa-nival" name="create-outline"></ion-icon>
               </a>
             </h4>
             <p id="fontNival-p">{{apellido}}</p>
@@ -56,23 +57,23 @@
           <div class="fondo">
             <h4> Oficina:
               <a style="float: right;" (click)="openOficinaModal()">
-                <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                <ion-icon class="fa-nival" name="create-outline"></ion-icon>
               </a>
             </h4>
             <p id="fontNival-p">{{oficina}}</p>
           </div>
-          <div class="fondo">
+          <div class="fondo"  *ngIf="networkStatus && networkStatus.connected">
             <h4> Contraseña:
               <a style="float: right;" (click)="openPasswordModal()">
-                <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                <ion-icon class="fa-nival" name="create-outline"></ion-icon>
               </a>
             </h4>
           </div>
           <br>
-          <div class="fondo">
+          <div class="fondo" *ngIf="networkStatus && networkStatus.connected">
             <h4> Eliminar Cuenta
               <a style="float: right;" (click)="openDeleteModal()">
-                <mat-icon class="fa-nival" style="color: red;" matSuffix>delete_forever</mat-icon>
+                <ion-icon class="fa-nival" color="red" name="trash-outline"></ion-icon>
               </a>
             </h4>
           </div>
@@ -80,13 +81,12 @@
       </ion-col>
       <ion-col size="12">
         <div class="bd-callout bd-callout-default">
-          <h2>
-            <mat-icon class="fa-nival" matSuffix>access_time</mat-icon>
-            Semestre:
+          <h3>
+            <ion-icon  class="fa-nival-bottom" style="padding-right: 3px;" name="time-sharp"></ion-icon>Semestre:
             <a style="float: right;" (click)="openAnioLectivoModal()">
-              <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+              <ion-icon class="fa-nival" name="create-outline"></ion-icon>
             </a>
-          </h2>
+          </h3>
           <div class="fondo">
             <p id="fontNival-p">
               Inicio: {{AnioLectivoInicio}}
@@ -101,21 +101,21 @@
       </ion-col>
       <ion-col size="12">
         <div class="bd-callout bd-callout-default">
-          <h2>
-            <mat-icon class="fa-nival" matSuffix>format_list_bulleted</mat-icon> Materias:
+          <h3>
+            <ion-icon class="fa-nival" name="list-sharp" style="padding-right: 3px;"></ion-icon>Materias:
             <a style="float: right;" (click)="openMateriaModal()">
-              <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+              <ion-icon  class="fa-nival" name="add-outline"></ion-icon>
             </a>
-          </h2>
+          </h3>
           <div class="fondo" *ngFor="let materia of materias; let i = index">
             <p id="fontNival-p"><strong>{{i+1+'.'}}</strong>
               {{materia.data.nombre}}
               <a style="float: right;" (click)="openEliminarMateriaModal(materia.data.nombre,materia.id,materia.data)"
                 *ngIf="val">
-                <mat-icon class="fa-nival" style="color: red;" matSuffix>delete_forever</mat-icon>
+                <ion-icon class="fa-nival" color="red" name="trash-outline"></ion-icon>
               </a>
               <a style="float: right;" (click)="openEditMateriaModal(materia.data.nombre,materia.id)" *ngIf="val">
-                <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                <ion-icon class="fa-nival" style="padding-right: 8px;" name="create-outline"></ion-icon>
               </a>
             </p>
           </div>
@@ -123,22 +123,22 @@
       </ion-col>
       <ion-col size="12">
         <div class="bd-callout bd-callout-default">
-          <h2>
-            <mat-icon class="fa-nival" matSuffix>library_books</mat-icon> Cursos:
+          <h3>
+            <ion-icon  class="fa-nival" name="book-sharp" style="padding-right: 3px;"></ion-icon>Cursos:
             <a style="float: right;" (click)="openCurso()">
-              <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+              <ion-icon  class="fa-nival" name="add-outline"></ion-icon>
             </a>
-          </h2>
+          </h3>
           <div class="fondo" *ngFor="let curso of cursoCompleto; let i = index">
             <p id="fontNival-p"><strong>{{i+1+'.'}}</strong>
               {{curso.nombre}}
               <a style="float: right;"
                 (click)="openEliminarCursoModal(curso.nombre,curso.uidNomina,curso.image,curso.idMateria,curso.array)"
                 *ngIf="val">
-                <mat-icon class="fa-nival" style="color: red;" matSuffix>delete_forever</mat-icon>
+                <ion-icon class="fa-nival" color="red" name="trash-outline"></ion-icon>
               </a>
               <a style="float: right;" (click)="editarCurso(curso.idCurso)" *ngIf="val">
-                <ion-icon class="fa-nival" style="font-size: 20px;" name="create-outline"></ion-icon>
+                <ion-icon class="fa-nival" style="padding-right: 8px;" name="create-outline"></ion-icon>
               </a>
             </p>
           </div>
@@ -152,3 +152,12 @@
   <ion-toolbar>
   </ion-toolbar>
 </ion-footer>
+
+<ng-template #barra>
+  <div class="spinnerA">
+      <span class="spinnerB">
+        <ion-spinner color="info" icon="spiral"></ion-spinner>
+      </span>
+  </div>
+
+</ng-template>

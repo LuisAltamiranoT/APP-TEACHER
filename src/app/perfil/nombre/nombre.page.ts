@@ -67,27 +67,29 @@ export class NombrePage implements OnInit {
     }
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       this.mensaje = '';
       const { name } = this.nombreForm.value;
       this.updateMateria(name);
-      const dat = await this.authService.updateName(name);
-      if (dat) {
+      this.authService.updateName(name);
+
+      setTimeout(() => {
         this.dialogRef.close();
-      } else {
         this.validate = true;
-      }
+        this.authService.showUpdatedata();
+      }, 2000);
+      
     } catch (error) {
       this.authService.showError(error);
     }
   }
 
   //ejecutar actualizacion en loas archivos materia
-  updateMateria(nombre:any){
+  updateMateria(nombre: any) {
     this.infoUser.arrayMaterias.forEach(element => {
-      this.authService.updateMateriaNombreProfesor(element.id,nombre+' '+this.infoUser.apellido);
+      this.authService.updateMateriaNombreProfesor(element.id, nombre + ' ' + this.infoUser.apellido);
     });
   }
 
@@ -130,7 +132,7 @@ export class NombrePage implements OnInit {
       return null;
     };
   }
-  
+
   limpiarBusqueda() {
     this.nombreForm.patchValue({ name: "" });
   }

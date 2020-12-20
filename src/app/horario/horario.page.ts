@@ -13,7 +13,8 @@ import { Horario } from "src/app/shared/models/horario.interface";
 })
 
 export class HorarioPage implements OnInit {
-
+//valida la ceacion de la tabla
+validateSpinner: boolean = false;
   public horarioVista: Horario[] = [
     { hora: '7:00', lunes: '', LC: '', Lid: '', martes: '', MC: '', Mid: '', miercoles: '', MiC: '', Miid: '', jueves: '', JC: '', Jid: '', viernes: '', VC: '', Vid: '' },
     //{ hora: '7:30', lunes: '',LC:'',Lid:'', martes: '',MC:'',Mid:'',miercoles: '', MiC:'',Miid:'', jueves: '',JC:'',Jid:'', viernes: '',VC:'',Vid:''},
@@ -43,6 +44,9 @@ export class HorarioPage implements OnInit {
     { hora: '20:00', lunes: '', LC: '', Lid: '', martes: '', MC: '', Mid: '', miercoles: '', MiC: '', Miid: '', jueves: '', JC: '', Jid: '', viernes: '', VC: '', Vid: '' }
   ]
 
+    //contador init
+    contInit:number=0
+
   //control de suscripciones
   private suscripcion1: Subscription;
 
@@ -58,7 +62,18 @@ export class HorarioPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getMateria();
+    if (this.contInit == 0) {
+      //console.log('se ejecuta init',this.cont);
+      this.getMateria();
+    }
+  }
+
+  ionViewWillEnter(){
+    this.contInit = this.contInit + 1;
+    if (this.contInit > 1) {
+      //console.log('se ejecuta initView',this.cont);
+      this.getMateria();
+    }
   }
 
   ngOnDestroy() {
@@ -94,7 +109,7 @@ export class HorarioPage implements OnInit {
             cont = 0;
           }
           elementCurso.horario.forEach(elementHorario => {
-            let idCurso = elementCurso.uidNomina + '//' + element.id;
+            let idCurso = elementCurso.uidNomina + '//' + element.id+'//'+element.data.nombre + ' - ' + elementCurso.aula;
             //console.log('uid nomina',elementCurso.uidNomina);
             this.horarioVista[elementHorario.posicion][elementHorario.dia] = element.data.nombre + ' - ' + elementCurso.aula;
             if (elementHorario.dia === 'lunes') {
@@ -122,8 +137,7 @@ export class HorarioPage implements OnInit {
         }
       });
     });
-
-    console.log(this.horarioVista);
+    this.validateSpinner=true;
   }
 
   applyFilter(event: Event) {

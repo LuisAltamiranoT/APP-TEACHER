@@ -14,6 +14,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
+//card material
+import { MatCardModule } from '@angular/material/card';
+
 import { IonicModule } from '@ionic/angular';
 
 import { ReportesPageRoutingModule } from './reportes-routing.module';
@@ -36,6 +39,7 @@ import { ReportesPage } from './reportes.page';
     MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatCardModule
   ],
   declarations: [ReportesPage]
 })

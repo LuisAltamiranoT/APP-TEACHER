@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 })
 export class RegisterPage implements OnInit {
 
+  validate = true;
+
   validacionPass: boolean = false;
   mensaje_nombre = '';
   mensaje_apellido = '';
@@ -32,6 +34,7 @@ export class RegisterPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    
   }
 
   dismiss() {
@@ -41,12 +44,15 @@ export class RegisterPage implements OnInit {
   }
 
   async onRegister() {
+    console.log('asdashdkjhaskjdhakjsh')
+    this.validate = false;
     try {
       const { email, password, nombre, apellido } = this.registerForm.value;
       const user = await this.authService.register(email, password, nombre, apellido);
       if (user) {
+        this.validate=true;
         this.modalController.dismiss();
-        this.router.navigate(['/send-email-component']);
+        this.router.navigate(['/send-email']);
       }
     } catch (error) {
       this.authService.showError(error);

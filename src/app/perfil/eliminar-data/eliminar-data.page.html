@@ -1,5 +1,5 @@
 <form [formGroup]="materiaForm" (ngSubmit)="onClick()">
-  <h2 mat-dialog-title class="pb-1">Materias:</h2>
+  <h3 mat-dialog-title class="pb-1"><strong>Materias:</strong></h3>
   <div *ngIf="validate else barra">
   </div>
   <h3>Está seguro de eliminar: <br><strong>{{materia}}</strong> de su lista</h3>

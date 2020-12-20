@@ -1,0 +1,25 @@
+<form class=" p-1 mt-1" [formGroup]="cursoForm" (ngSubmit)="buscar()">
+  <h3 mat-dialog-title class="pb-1"><strong> Fecha: </strong></h3>
+  <mat-form-field class="fullNivalWidth">
+    <mat-label>Historial</mat-label>
+    <mat-select formControlName="materiaSelect" (selectionChange)="setIndex($event.value)">
+      <mat-option *ngFor="let materia of historial, let indice=index" value="{{indice}}//{{materia}}">
+        {{materia}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-sm-6>
+        <ion-button type="submit" expand="full" size="small" [disabled]="!cursoForm.valid">
+          <ion-icon name="send-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col col-12 col-sm-6>
+        <ion-button (click)="dimissModal()" color="red" expand="full" size="small">
+          <ion-icon name="close-sharp"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>

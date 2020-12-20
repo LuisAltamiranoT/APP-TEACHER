@@ -20,7 +20,10 @@ export class SendEmailPage implements OnDestroy {
   }
 
   onSendEmail(): void {
-    this.authService.sendVerificationEmail();
+    let data = this.authService.sendVerificationEmail();
+    if (data) {
+      this.authService.showInfo('Se ha enviado correctamente el mensaje')
+    }
   }
 
 }

@@ -34,16 +34,18 @@ export class OficinaPage implements OnInit {
     this.placeholder = this.infoUser;
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       const { office } = this.oficinaForm.value;
-      const dat = await this.authService.updateOficina(office);
-      if (dat) {
+      this.authService.updateOficina(office);
+      
+      setTimeout(() => {
         this.dialogRef.close();
-      }else{
-        this.validate=true;
-      }
+        this.validate = true;
+        this.authService.showUpdatedata();
+      }, 2000);
+
     } catch (error) {
       this.authService.showError(error);
     }

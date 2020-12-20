@@ -25,14 +25,13 @@ export class UploadImageService extends ImageValidator {
   public nominaHorario: any;
 
   constructor(
-    private afs: AngularFirestore,
     private storage: AngularFireStorage,
     private authService: AuthService
   ) {
     super();
   }
 
-  public preAddAndUpdate(aula: any, idMateria: any, image: FileI, nomina: any, horario: any, cursos: any, idCursoNuevo) {
+  public preAddAndUpdate(aula: any, idMateria: any, image: FileI, nomina: any, horario: any, cursos: any,idCursoNuevo) {
     //aula,idMateria,image,Nomina,Horario,cursos
     this.filePath = this.generateFileName(image.name, this.MEDIA_STORAGE_PATH);
     const fileRef = this.storage.ref(this.filePath);
@@ -42,7 +41,7 @@ export class UploadImageService extends ImageValidator {
         fileRef.getDownloadURL().subscribe(urlImage => {
           this.downloadURL = urlImage;
           //aqui se ejecuta el
-          this.addCurso(aula, idMateria, horario, nomina, cursos, idCursoNuevo);
+          this.addCurso(aula, idMateria, horario, nomina, cursos,idCursoNuevo);
           //aula,idMateria,horario,nomina,arrayCursos
         });
       })
@@ -50,7 +49,7 @@ export class UploadImageService extends ImageValidator {
     //cursos,idMateria,idCurso,nomina
   }
 
-  async addCurso(aula: any, idMateria: any, horario: any, nomina: any, arrayCurso: any, idCursoNuevo: any) {
+  async addCurso(aula: any, idMateria: any, horario: any, nomina: any, arrayCurso: any, idCursoNuevo:any) {
     //aula,idMateria,horario,nomina,arrayCursos
     let cursos = arrayCurso;
     let idCurso = idCursoNuevo;
@@ -97,12 +96,12 @@ export class UploadImageService extends ImageValidator {
   }
 
   public deleteImageCurso(imageName: string) {
-    try {
+    try{
       let splitted = imageName.split("imageCurso%2F")[1];
       let name = splitted.split("?alt")[0];
       const fileref = this.storage.ref(`${this.MEDIA_STORAGE_PATH}/${name}`);
       fileref.delete();
-    } catch (error) {
+    }catch(error){
 
     }
   }
@@ -117,8 +116,7 @@ export class UploadImageService extends ImageValidator {
   }
 
 
-  public preAddAndUpdatePerfil(image: FileI, arrayMaterias: any) {
-    let item = false;
+  public preAddAndUpdatePerfil(image: FileI,arrayMaterias:any) {
     this.filePath = this.generateFileName(image.name, this.MEDIA_STORAGE_PATH_PERFIL);
     const fileRef = this.storage.ref(this.filePath);
     const task = this.storage.upload(this.filePath, image);
@@ -126,13 +124,13 @@ export class UploadImageService extends ImageValidator {
       finalize(() => {
         fileRef.getDownloadURL().subscribe(urlImage => {
           this.downloadURL = urlImage;
-          this.addPhoto(arrayMaterias);
+            this.addPhoto(arrayMaterias);
         });
       })
     ).subscribe();
   }
 
-  public async addPhoto(arrayMaterias: any) {
+  public async addPhoto(arrayMaterias:any) {
     arrayMaterias.forEach(element => {
       this.authService.updateMateriaFotoProfesor(element.id, this.downloadURL);
     });
@@ -142,8 +140,11 @@ export class UploadImageService extends ImageValidator {
 
   public deleteImagePerfil(imageName: string) {
     let splitted = imageName.split("perfil%2F")[1];
-    let name = splitted.split("?alt")[0];
+    let name =  splitted.split("?alt")[0];
     const fileref = this.storage.ref(`${this.MEDIA_STORAGE_PATH_PERFIL}/${name}`);
     fileref.delete();
   }
+
+
+
 }

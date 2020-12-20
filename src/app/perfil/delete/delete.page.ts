@@ -23,6 +23,10 @@ export class DeletePage implements OnInit {
     oldPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
   })
 
+  // imagen:this.perfil,
+  //cursos:this.cursoCompleto
+  cursos:any=[];
+  imagePerfil:any='';
   constructor(
     public dialogRef: MatDialogRef<DeletePage>,
     @Inject(MAT_DIALOG_DATA) public infoUser: any,
@@ -30,12 +34,15 @@ export class DeletePage implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.cursos=this.infoUser.cursos;
+    this.imagePerfil=this.infoUser.imagen;
+    console.log(this.cursos)
   }
 
   async onClick() {
     this.validate = false;
     const { oldPassword } = this.passwordForm.value;
-    const dat = await this.authService.updateAcoountUser(oldPassword);
+    const dat = await this.authService.updateAcoountUser(oldPassword,this.imagePerfil,this.cursos);
     if (dat != 1) {
       this.validate = true;
     } else {

@@ -11,11 +11,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 
+//card material
+import { MatCardModule } from '@angular/material/card';
+
 import { IonicModule } from '@ionic/angular';
 
 import { EditCursoPageRoutingModule } from './edit-curso-routing.module';
 
 import { EditCursoPage } from './edit-curso.page';
+import { NgFallimgModule } from 'ng-fallimg';
 
 @NgModule({
   imports: [
@@ -30,7 +34,9 @@ import { EditCursoPage } from './edit-curso.page';
     MatDialogModule,
     MatButtonModule,
     MatSelectModule,
-    MatTableModule
+    MatTableModule,
+    MatCardModule,
+    NgFallimgModule
   ],
   declarations: [EditCursoPage]
 })

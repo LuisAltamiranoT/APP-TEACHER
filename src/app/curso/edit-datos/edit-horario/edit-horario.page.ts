@@ -280,17 +280,18 @@ export class EditHorarioPage implements OnInit {
   }
 
 
-  async guardarNuevoHorario() {
+  guardarNuevoHorario() {
     try {
       console.log('array completo', this.infoUser.arrayCompleto);
       this.validate = false;
-      let data = await this.authService.updateHorario(this.infoUser.arrayCompleto, this.idMateriaSeleccionada);
-      if (data) {
+      this.authService.updateHorario(this.infoUser.arrayCompleto, this.idMateriaSeleccionada);
+      
+      setTimeout(() => {
+        this.dialogRef.close();
         this.validate = true;
-        this.dimissModal();
-      } else {
-        this.validate = true;
-      }
+        this.authService.showUpdatedata();
+
+      }, 2000);
     } catch (error) {
       //this.validate = false;
     }

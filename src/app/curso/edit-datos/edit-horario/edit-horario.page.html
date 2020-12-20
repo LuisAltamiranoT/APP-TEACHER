@@ -1,4 +1,3 @@
-<h2 mat-dialog-title> Editar Horario:</h2>
 <div *ngIf="validate else barra">
 </div>
 <ion-grid>
@@ -16,11 +15,11 @@
 
             <!-- Name Column -->
             <ng-container matColumnDef="lunes">
-              <th mat-header-cell *matHeaderCellDef> Lunes </th>
+              <th class="nombre" mat-header-cell *matHeaderCellDef> Lunes </th>
               <td class="px-1" mat-cell *matCellDef="let element, let l = index;">
                 <!--Info para nuevas materias 
               LS estado actual LD estado Almacenado-->
-                <button mat-flat-button style="font-size: 14px; background-color: #56E2F3; color: white;"
+                <button mat-flat-button style="font-size: 14px; background-color:#47bfcc; color: white;"
                   *ngIf="element.LS" (click)="delHoraDiaLunes(l)">{{element.lunes}}
                   <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
                 </button>
@@ -31,18 +30,18 @@
                   {{element.lunes}}
                 </button>
                 <a (click)="setHoraDiaLunes(l,element.hora)" class="text-center text-muted" *ngIf="!element.LS && !element.LD">
-                  <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                  <ion-icon class="fa-nival-bottom" name="add-circle-outline"></ion-icon>
                 </a>
               </td>
             </ng-container>
 
             <!-- Weight Column -->
             <ng-container matColumnDef="martes">
-              <th mat-header-cell *matHeaderCellDef> Martes </th>
+              <th class="nombre" mat-header-cell *matHeaderCellDef> Martes </th>
               <td class="px-1" mat-cell *matCellDef="let element, let m = index;">
                 <!--Info para nuevas materias 
               LS estado actual LD estado Almacenado-->
-                <button mat-flat-button style="font-size: 14px; background-color: #56E2F3; color: white;"
+                <button mat-flat-button style="font-size: 14px; background-color:#47bfcc; color: white;"
                   *ngIf="element.MS" (click)="delHoraDiaMartes(m)">
                   {{element.martes}}
                   <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
@@ -53,18 +52,18 @@
                   {{element.martes}}
                 </button>
                 <a (click)="setHoraDiaMartes(m,element.hora)" class="text-center text-muted" *ngIf="!element.MS && !element.MD">
-                  <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                  <ion-icon class="fa-nival-bottom" name="add-circle-outline"></ion-icon>
                 </a>
               </td>
             </ng-container>
 
             <!-- Symbol Column -->
             <ng-container matColumnDef="miercoles">
-              <th mat-header-cell *matHeaderCellDef> Miercoles </th>
+              <th class="nombre" mat-header-cell *matHeaderCellDef> Miercoles </th>
               <td class="px-1" mat-cell *matCellDef="let element, let mi = index;">
                 <!--Info para nuevas materias 
               LS estado actual LD estado Almacenado-->
-                <button mat-flat-button style="font-size: 14px; background-color: #56E2F3; color: white;"
+                <button mat-flat-button style="font-size: 14px; background-color:#47bfcc; color: white;"
                   *ngIf="element.MiS" (click)="delHoraDiaMiercoles(mi)">
                   {{element.miercoles}}
                   <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
@@ -76,16 +75,16 @@
                 </button>
                 <a (click)="setHoraDiaMiercoles(mi,element.hora)" class="text-center text-muted"
                   *ngIf="!element.MiS && !element.MiD">
-                  <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                  <ion-icon class="fa-nival-bottom" name="add-circle-outline"></ion-icon>
                 </a>
               </td>
             </ng-container>
             <ng-container matColumnDef="jueves">
-              <th mat-header-cell *matHeaderCellDef> Jueves </th>
+              <th class="nombre" mat-header-cell *matHeaderCellDef> Jueves </th>
               <td class="px-1" mat-cell *matCellDef="let element, let j = index;">
                 <!--Info para nuevas materias 
               LS estado actual LD estado Almacenado-->
-                <button mat-flat-button style="font-size: 14px; background-color: #56E2F3; color: white;"
+                <button mat-flat-button style="font-size: 14px; background-color:#47bfcc; color: white;"
                   *ngIf="element.JS" (click)="delHoraDiaJueves(j)">
                   {{element.jueves}}
                   <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
@@ -96,17 +95,17 @@
                   {{element.jueves}}
                 </button>
                 <a class="text-center text-muted" (click)="setHoraDiaJueves(j,element.hora)" *ngIf="!element.JS && !element.JD">
-                  <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                  <ion-icon class="fa-nival-bottom" name="add-circle-outline"></ion-icon>
                 </a>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="viernes">
-              <th mat-header-cell *matHeaderCellDef> viernes </th>
+              <th class="nombre" mat-header-cell *matHeaderCellDef> viernes </th>
               <td class="px-1" mat-cell *matCellDef="let element, let v = index;">
                 <!--Info para nuevas materias 
               LS estado actual LD estado Almacenado-->
-                <button mat-flat-button style="font-size: 14px; background-color: #56E2F3; color: white;" 
+                <button mat-flat-button style="font-size: 14px; background-color:#47bfcc; color: white;" 
                   *ngIf="element.VS" (click)="delHoraDiaViernes(v)">
                   {{element.viernes}}
                   <mat-icon class="fa-nival" matSuffix>highlight_off</mat-icon>
@@ -117,7 +116,7 @@
                   {{element.viernes}}
                 </button>
                 <a class="text-center text-muted" (click)="setHoraDiaViernes(v,element.hora)" *ngIf="!element.VS && !element.VD">
-                  <mat-icon class="fa-nival" matSuffix>add_box</mat-icon>
+                  <ion-icon class="fa-nival-bottom" name="add-circle-outline"></ion-icon>
                 </a>
               </td>
             </ng-container>

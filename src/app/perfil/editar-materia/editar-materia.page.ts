@@ -61,14 +61,15 @@ export class EditarMateriaPage implements OnInit {
       this.validate = false;
       const { materia } = this.materiaForm.value;
 
-      let dat = this.authService.updateMateria(this.idData, materia);
-      /////////documentId: string, data: any                       
-      if (dat) {
+      this.authService.updateMateria(this.idData, materia);
+      
+      setTimeout(() => {
         this.dialogRef.close();
         this.validate = true;
-      } else {
-        this.validate = true;
-      }
+        this.authService.showUpdatedata();
+      }, 2000);
+      /////////documentId: string, data: any                       
+     
     } catch (error) {
       console.log(error);
     }

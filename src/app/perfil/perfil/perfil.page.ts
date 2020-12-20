@@ -18,6 +18,9 @@ import { AuthService } from '../../service/auth/auth.service';
 import { EliminarCursoPage } from '../eliminar-curso/eliminar-curso.page';
 import { DeletePage } from '../delete/delete.page';
 
+import { Plugins, NetworkStatus, PluginListenerHandle } from '@capacitor/core';
+const { Network } = Plugins;
+
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
@@ -25,9 +28,16 @@ import { DeletePage } from '../delete/delete.page';
 })
 
 export class PerfilPage implements OnInit {
+  networkStatus: NetworkStatus;
+  networkListener: PluginListenerHandle;
+
+
+  //valida la ceacion de la tabla
+  validateSpinner: boolean = false;
+  img='../../../assets//icon/withoutUser.jpg';
 
   image = "../../../assets/profe.jpg";
-  perfil = "https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680";
+  perfil = "";
   nombre = "";
   apellido = "";
   oficina = "";
@@ -42,6 +52,9 @@ export class PerfilPage implements OnInit {
 
   AnioLectivoInicio = "dd/mm/yyyy";
   AnioLectivoFin = "dd/mm/yyyy";
+
+  //comprobar fucnionamiento del init
+  contInit:number = 0;
 
   val = true;
 
@@ -63,15 +76,50 @@ export class PerfilPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataUser();
-    this.materia();
-
+    if (this.contInit == 0) {
+      this.dataUser();
+      this.materia();  
+      this.network();
+    }
   }
 
+  ionViewWillEnter(){
+    this.contInit = this.contInit + 1;
+    if (this.contInit > 1) {
+      this.dataUser();
+      this.materia();
+      this.network();
+    }
+  }
 
+  async network() {
+    console.log('se esta ejecutando vghhgv');
+    this.networkListener = Network.addListener('networkStatusChange', status => {
+      console.log('se esta ejecutando');
+      console.log('network', status);
+      this.networkStatus = status;
+    });
+    this.networkStatus = await Network.getStatus();
+  }
+  
   ngOnDestroy() {
-    this.suscripcion1.unsubscribe();
+    if(this.suscripcion1){
+      this.suscripcion1.unsubscribe();
+    }
+
+    if(this.suscripcion3){
     this.suscripcion3.unsubscribe();
+    }
+  }
+
+  ionViewDidLeave() {
+    if(this.suscripcion1){
+      this.suscripcion1.unsubscribe();
+    }
+
+    if(this.suscripcion3){
+    this.suscripcion3.unsubscribe();
+    }
   }
 
   dataUser() {
@@ -84,27 +132,10 @@ export class PerfilPage implements OnInit {
       this.oficina = dataUser[0].oficina;
       this.AnioLectivoInicio = dataUser[0].anioInicio;
       this.AnioLectivoFin = dataUser[0].anioFin;
-      this.perfil = dataUser[0].photoUrl;
-      console.log(data);
-    });
-  }
 
-  //curso completo
-
-  cargarData() {
-    this.cursoCompleto.length = 0;
-    this.materias.forEach(elementMateria => {
-      elementMateria.data.cursos.forEach(elementCurso => {
-        //console.log(elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id);
-        this.cursoCompleto.push({
-          idCurso: elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementCurso.id,
-          nombre: elementMateria.data.nombre + ' ' + elementCurso.aula,
-          image: elementCurso.image,
-          array: elementCurso,
-          uidNomina: elementCurso.uidNomina,
-          idMateria: elementMateria.id
-        })
-      });
+      if(dataUser[0].photoUrl!=''){
+        this.perfil = dataUser[0].photoUrl;
+      }
     });
   }
 
@@ -122,6 +153,27 @@ export class PerfilPage implements OnInit {
       this.cargarData();
     });
   }
+    //curso completo
+
+    cargarData() {
+      this.cursoCompleto.length = 0;
+      this.materias.forEach(elementMateria => {
+        if( elementMateria.data.cursos){
+          elementMateria.data.cursos.forEach(elementCurso => {
+            this.cursoCompleto.push({
+              idCurso: elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementCurso.id,
+              nombre: elementMateria.data.nombre + ' ' + elementCurso.aula,
+              image: elementCurso.image,
+              array: elementCurso,
+              uidNomina: elementCurso.uidNomina,
+              idMateria: elementMateria.id
+            })
+          });
+        }
+      });
+      this.validateSpinner=true;
+    }
+  
 
   //editar curso
   editarCurso(idCurso: any) {
@@ -129,7 +181,7 @@ export class PerfilPage implements OnInit {
   }
 
   openAnioLectivoModal() {
-    this.openMaterial(EditarAnioPage);
+    this.openMaterial(EditarAnioPage,'');
   }
 
   //al momento de actualizar el nombre se ebe actualizar en las materias que tenga el usuario
@@ -160,7 +212,7 @@ export class PerfilPage implements OnInit {
   }
 
   openPasswordModal() {
-    this.openMaterial(PasswordPage);
+    this.openMaterial(PasswordPage,'');
   }
 
   openMateriaModal() {
@@ -184,7 +236,7 @@ export class PerfilPage implements OnInit {
     let dataMateria = {
       nombre: data,
       id: idData,
-      array: dataArray,
+      array: dataArray
     }
     this.openMaterial1(EliminarDataPage, dataMateria);
   }
@@ -209,13 +261,13 @@ export class PerfilPage implements OnInit {
   }
 
   openPhoto() {
-    if (this.perfil != 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680') {
+    if (this.perfil != '') {
       let info = {
         data: this.perfil,
         array:this.materias
       }
       this.ventana.open(FotoPage,
-        { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+        { width: ' 25rem', data: info,panelClass: 'myapp-no-padding-dialog2' }).afterClosed().subscribe(item => {
         });
     } else {
       let info = {
@@ -223,25 +275,29 @@ export class PerfilPage implements OnInit {
         array:this.materias
       }
       this.ventana.open(FotoPage,
-        { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+        { width: ' 25rem', data: info,panelClass: 'myapp-no-padding-dialog2' }).afterClosed().subscribe(item => {
         });
     }
   }
 
   openDeleteModal() {
-    this.openMaterial(DeletePage);
+    let data={
+      imagen:this.perfil,
+      cursos:this.cursoCompleto
+    }
+   this.openMaterial(DeletePage,data);
   }
 
-  openMaterial(component: any) {
+  openMaterial(component: any,data:any) {
     this.ventana.open(component,
-      { width: ' 25rem' }).afterClosed().subscribe(item => {
-        this.cargarData();
+      { width: ' 25rem',data:data,panelClass: 'myapp-no-padding-dialog2' }).afterClosed().subscribe(item => {
+        this.dataUser();
       });
   }
 
   openMaterial1(component: any, info: any) {
     this.ventana.open(component,
-      { width: ' 25rem', data: info }).afterClosed().subscribe(item => {
+      { width: ' 25rem', data: info,panelClass: 'myapp-no-padding-dialog2' }).afterClosed().subscribe(item => {
         this.materia();
       });
   }
@@ -251,7 +307,7 @@ export class PerfilPage implements OnInit {
     if (this.materias.length != 0) {
       this.router.navigate(['curso']);
     } else {
-      this.authService.showInfo("Agregue una materia en su lista");
+      this.authService.showInfo("Primero agregue una materia en su lista");
     }
   }
 }

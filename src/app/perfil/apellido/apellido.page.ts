@@ -31,25 +31,27 @@ export class ApellidoPage implements OnInit {
       apellido:this.apellido,
       arrayMaterias:this.materias */
     if (this.infoUser == "") {
-
     } else {
       this.apellidoForm.patchValue({ lastName: this.infoUser.apellido });
       this.placeholder = this.infoUser.apellido;
     }
   }
 
-  async onClick() {
+  onClick() {
     try {
       this.validate = false;
       this.mensaje = '';
       const { lastName } = this.apellidoForm.value;
+      
       this.updateMateria(lastName);
-      const dat = await this.authService.updateLastName(lastName);
-      if (dat) {
+      this.authService.updateLastName(lastName);
+
+      setTimeout(() => {
         this.dialogRef.close();
-      } else {
         this.validate = true;
-      }
+        this.authService.showUpdatedata();
+      }, 2000);
+
     } catch (error) {
       this.authService.showError(error);
     }

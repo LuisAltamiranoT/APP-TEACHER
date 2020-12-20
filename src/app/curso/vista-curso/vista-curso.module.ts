@@ -12,6 +12,9 @@ import {MatButtonModule} from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
+//card material
+import { MatCardModule } from '@angular/material/card';
+
 import { IonicModule } from '@ionic/angular';
 
 import { VistaCursoPageRoutingModule } from './vista-curso-routing.module';
@@ -31,7 +34,8 @@ import { VistaCursoPage } from './vista-curso.page';
     MatDialogModule,
     MatButtonModule,
     MatTableModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatCardModule
   ],
   declarations: [VistaCursoPage]
 })

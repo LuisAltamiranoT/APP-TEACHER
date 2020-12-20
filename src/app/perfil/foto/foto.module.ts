@@ -15,6 +15,7 @@ import { IonicModule } from '@ionic/angular';
 import { FotoPageRoutingModule } from './foto-routing.module';
 
 import { FotoPage } from './foto.page';
+import { NgFallimgModule } from 'ng-fallimg';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { FotoPage } from './foto.page';
     MatInputModule,
     MatIconModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    NgFallimgModule
   ],
   declarations: [FotoPage]
 })

@@ -15,6 +15,8 @@ export class AddEstudiantePage implements OnInit {
   placeholderCodigo = "Ingrese el código único"
   validate = true;
   private array = [];
+  private historial=[];
+  private asistencia=[];
 
   estudianteForm = new FormGroup({
     codigoUnico: new FormControl('', [Validators.required, Validators.minLength(9)]),
@@ -32,7 +34,13 @@ export class AddEstudiantePage implements OnInit {
     //idMateria:this.idMateria,
     //idCurso:this.idNomina,
     //array:this.nominaVista
+    //historial:this.historial
+
+    //nomina vista
+   
     this.array = this.infoUser.array;
+    this.historial=this.infoUser.historial;
+    //console.log(this.historial)
   }
 
   async onClick() {
@@ -67,22 +75,39 @@ export class AddEstudiantePage implements OnInit {
       if (validacionDatos) {
 
       } else {
+
+        this.historial.forEach(data=>{
+          let splitted = data.split("//");
+          let nombreDay = splitted[0];
+          let fechaActual = splitted[1];
+          this.asistencia.push({
+            dia:nombreDay,
+            fecha:fechaActual,
+            presente:false,
+            atraso:false,
+            falta:true,
+            estado:false
+          })
+        })
+
+        console.log(this.asistencia);
+        
         let info = {
           nombre: estudiante,
           codigoUnico: codigoUnico,
           correo: email,
-          image: 'https://firebasestorage.googleapis.com/v0/b/easyacnival.appspot.com/o/imageCurso%2FwithoutUser.jpg?alt=media&token=61ba721c-b7c1-42eb-8712-829f4c465680',
+          image: '',
           uidUser: 'noRegister',
-          asistencia: []
+          asistencia: this.asistencia
         }
+        console.log(info)
 
         const dat = this.authService.addEstudiante(this.infoUser.idMateria, this.infoUser.idCurso, info);
-        if (dat) {
-          this.validate=true
+        setTimeout(() => {
           this.dialogRef.close();
-        } else {
           this.validate = true;
-        }
+          this.authService.showUpdatedata();
+        }, 2000);
       }
 
     } catch (error) {
