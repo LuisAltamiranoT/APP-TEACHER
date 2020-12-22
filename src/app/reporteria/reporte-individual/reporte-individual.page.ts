@@ -29,18 +29,6 @@ export class ReporteIndividualPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-    //console.log('esto es el dato ',this.data,this.data.array);
-
-    //console.log('llega kasjd',this.data.estado);
-    /*
-      estado:estado,
-      index:discol,
-      array:this.dataNominaConsulta,
-      indexEstudiante:index,
-      idMateria:this.idMateria,
-      idNomina:this.idNomina
-     */
     this.fecha = this.data.index;
     this.array = this.data.array;
     this.indexEstudiante = this.data.indexEstudiante;//posicion en el array
@@ -51,7 +39,6 @@ export class ReporteIndividualPage implements OnInit {
     this.arrayTemp2 = JSON.parse(JSON.stringify(this.array));
 
 
-    console.log('Los dos archivos', this.arrayTemp2);
 
     if (this.data.estado == 'Presente') {
       this.presente = true;

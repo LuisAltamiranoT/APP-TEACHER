@@ -101,18 +101,14 @@ export class EditCursoPage implements OnInit {
       this.dataMateria = [data.payload.data()];
       let cont = -1;
       this.nombreMateria = this.dataMateria[0].nombre;
-      console.log('data materia', this.dataMateria);
       this.dataMateria.forEach(elementCursos => {
-        console.log(elementCursos);
         elementCursos.cursos.forEach(element => {
           cont = cont + 1;
-          console.log(element, cont)
           if (this.idCurso == element.id) {
             this.idIndexCurso = cont;
             this.placeholderAula = element.aula,
               this.photoSelected = element.image
           }
-          console.log(this.photoSelected, 'asdnjas', element.image);
         });
       });
     })
@@ -126,7 +122,6 @@ export class EditCursoPage implements OnInit {
       const dataNomina: any = data.payload.data();
       
       this.historial=dataNomina.historial;
-      console.log('datos de la nomina',dataNomina,this.historial);
       //'codigoUnico','image','correo','nombre'
       dataNomina.nomina.forEach((dataMateria: any) => {
         this.nominaVista.push({
@@ -138,11 +133,8 @@ export class EditCursoPage implements OnInit {
           asistencia: dataMateria.asistencia
         })
       });
-      console.log(this.nominaVista)
       this.dataSource2 = new MatTableDataSource(this.nominaVista);
-      this.tabla1.renderRows();
     });
-    console.log(this.nominaVista);
     this.validateSpinner=true;
   }
 

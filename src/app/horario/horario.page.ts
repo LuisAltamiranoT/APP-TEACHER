@@ -63,7 +63,6 @@ validateSpinner: boolean = false;
 
   ngOnInit(): void {
     if (this.contInit == 0) {
-      //console.log('se ejecuta init',this.cont);
       this.getMateria();
     }
   }
@@ -71,7 +70,6 @@ validateSpinner: boolean = false;
   ionViewWillEnter(){
     this.contInit = this.contInit + 1;
     if (this.contInit > 1) {
-      //console.log('se ejecuta initView',this.cont);
       this.getMateria();
     }
   }
@@ -101,7 +99,6 @@ validateSpinner: boolean = false;
     let cont = 0;
     this.materias.forEach(element => {
       element.data.cursos.forEach(elementCurso => {
-        //console.log('id materias'+element.id);
         if ([elementCurso].length != 0) {
           if (cont < this.color.length - 1) {
             cont = cont + 1
@@ -110,7 +107,6 @@ validateSpinner: boolean = false;
           }
           elementCurso.horario.forEach(elementHorario => {
             let idCurso = elementCurso.uidNomina + '//' + element.id+'//'+element.data.nombre + ' - ' + elementCurso.aula;
-            //console.log('uid nomina',elementCurso.uidNomina);
             this.horarioVista[elementHorario.posicion][elementHorario.dia] = element.data.nombre + ' - ' + elementCurso.aula;
             if (elementHorario.dia === 'lunes') {
               this.horarioVista[elementHorario.posicion]['LC'] = this.color[cont];

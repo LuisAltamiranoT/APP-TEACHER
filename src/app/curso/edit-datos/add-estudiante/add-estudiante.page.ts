@@ -30,17 +30,9 @@ export class AddEstudiantePage implements OnInit {
     private authService: AuthService
   ) { }
 
-  ngOnInit(): void {
-    //idMateria:this.idMateria,
-    //idCurso:this.idNomina,
-    //array:this.nominaVista
-    //historial:this.historial
-
-    //nomina vista
-   
+  ngOnInit(): void { 
     this.array = this.infoUser.array;
     this.historial=this.infoUser.historial;
-    //console.log(this.historial)
   }
 
   async onClick() {
@@ -90,7 +82,6 @@ export class AddEstudiantePage implements OnInit {
           })
         })
 
-        console.log(this.asistencia);
         
         let info = {
           nombre: estudiante,
@@ -100,7 +91,6 @@ export class AddEstudiantePage implements OnInit {
           uidUser: 'noRegister',
           asistencia: this.asistencia
         }
-        console.log(info)
 
         const dat = this.authService.addEstudiante(this.infoUser.idMateria, this.infoUser.idCurso, info);
         setTimeout(() => {
@@ -133,16 +123,13 @@ export class AddEstudiantePage implements OnInit {
       // control.parent es el FormGroup
       if (control.parent) { // en las primeras llamadas control.parent es undefined
         let dominio = control.value.split("@", 2);
-        //console.log(dominio[1],dominio.length);
         if (dominio[1] !== 'epn.edu.ec') {
-          //console.log(control.value,'no pertenece al dominio');
           //this.validacionEmail=false;
           return {
             match: true
           };
         }
       }
-      //console.log('iguales');
       //this.validacionEmail=true;
       return null;
     };

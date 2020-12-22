@@ -64,8 +64,6 @@ export class InfoPage implements OnInit {
     return (control: AbstractControl): { [s: string]: boolean } => {
       if (control.parent) {
         let data = control.value;
-        //console.log(data);
-        //console.log(long)
         if (data === this.placeholder) {
           return {
             match: true

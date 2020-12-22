@@ -19,7 +19,6 @@ export class ModalAttentionPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.infoUser);
   }
 
   

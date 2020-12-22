@@ -70,10 +70,7 @@ export class CursoGroupPage implements OnInit {
   }
 
   async network() {
-    console.log('se esta ejecutando vghhgv');
     this.networkListener = Network.addListener('networkStatusChange', status => {
-      console.log('se esta ejecutando');
-      console.log('network', status);
       this.networkStatus = status;
     });
 
@@ -106,7 +103,6 @@ export class CursoGroupPage implements OnInit {
     this.materias.forEach(elementMateria => {
       if (elementMateria.data.cursos) {
         elementMateria.data.cursos.forEach(elementCurso => {
-          //console.log(elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id);
           let idCurso = elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementMateria.data.nombre + ' ' + elementCurso.aula;
           this.cursoVista.push({
             idCursoEdit: elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementCurso.id,
@@ -115,7 +111,6 @@ export class CursoGroupPage implements OnInit {
             image: elementCurso.image,
             photoUrl: elementMateria.data.photoUrl
           })
-          console.log('datos obtenidos del service curso', this.cursoVista, this.materias);
         });
       }
       if (this.cursoVista.length != 0) {

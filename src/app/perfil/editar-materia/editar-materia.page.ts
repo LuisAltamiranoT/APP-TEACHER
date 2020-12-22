@@ -52,7 +52,6 @@ export class EditarMateriaPage implements OnInit {
       this.materias.push(
         dataMateria.data.nombre.toUpperCase()
       );
-      console.log(this.materias);
     })
   }
 
@@ -71,7 +70,6 @@ export class EditarMateriaPage implements OnInit {
       /////////documentId: string, data: any                       
      
     } catch (error) {
-      console.log(error);
     }
   }
 

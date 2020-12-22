@@ -19,7 +19,6 @@ export class NotificacionSalirPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.infoUser);
   }
 
   

@@ -139,7 +139,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
 
   async ngOnInit() {
     this.dataId = this._route.snapshot.paramMap.get('data');
-    console.log(this.dataId)
     let splitted = this.dataId.split("//");
     this.idNomina = splitted[0];
     this.idMateria = splitted[1];
@@ -158,7 +157,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
     this.hora = moment().format('HH:mm:ss');
     // Generar código randomico
     this.generaNss();
-    console.log('randomico', this.codigo_randomico)
 
     this.network();
   }
@@ -174,10 +172,7 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
   
 
   async network() {
-    console.log('se esta ejecutando vghhgv');
     this.networkListener = Network.addListener('networkStatusChange', status => {
-      console.log('se esta ejecutando');
-      console.log('network', status);
       this.networkStatus = status;
     });
 
@@ -209,7 +204,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
           this.validateReporte=false;
         }
 
-        console.log('este es el codigo QR', dataNomina.code)
         //contienen la informacion que se encuentra en el server
         this.nominaEstudiantes = dataNomina.nomina.map(element => { return element });
 
@@ -236,7 +230,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
           //this.validate = true;
           this.replaceVistaFalse();
         } else {
-          console.log(this.nominaEstudiantes);
           //this.validate = true;
           this.replaceVista();
         }
@@ -250,7 +243,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
     //la nomina del profesor es la principal
     if (this.asistenciaProfesor.length != 0) {
       this.nominaVista.forEach((dataMateria, index) => {
-        console.log(dataMateria);
         let ultimoId = dataMateria.asistencia.length - 1;
 
         if (ultimoId === -1) {
@@ -285,9 +277,7 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
       })
     } else {
       this.nominaVista.forEach((dataMateria, index) => {
-        console.log('esta aqui', dataMateria);
         let ultimoId = dataMateria.asistencia.length - 1;
-        console.log('este es el id', ultimoId);
         if (ultimoId === -1) {
           dataMateria.presente = false;
           dataMateria.atraso = false;
@@ -424,7 +414,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
         falta: falta
       })
     }
-    console.log(this.asistenciaProfesor);
   }
 
 
@@ -459,7 +448,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
         falta: falta
       })
     }
-    console.log(this.asistenciaProfesorAnterior);
   }
 
 
@@ -470,24 +458,20 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
     this.validate = false;
     //la suscripcion se detiene para no causar daños al almacenamiento
     if (this.suscripcion1) {
-      console.log('se ejecuta la unsuscribe')
       this.suscripcion1.unsubscribe();
     }
 
     //valida si esta activo la seleccion de una asistencia anterio y comprueba si se ha realizado alguna configuracion en esta
     if (this.validateSeleccionHistorial && this.asistenciaProfesorAnterior.length != 0) {
-      console.log('se guarda inforamcion de fecha anterior');
       //se ejecuta el almacenamiento de la informacion anterior
       //this.validateGuardarInformacion=true;
       this.guardarFechasAnteriores();
 
     } else if (this.validateSeleccionHistorial === false) {
-      //console.log('se guarda la informacion de presente');
       this.guardarPresente();
 
     } else {
       this.authService.showInfo('Usted no ha realizado ningun cambio');
-      //console.log('no hay que guardar');
     }
   }
 
@@ -502,7 +486,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
         }
       })
     })
-    console.log(this.nominaEstudiantes);
     this.almacenamientoDeAsistenciaAnterior();
   }
 
@@ -521,10 +504,8 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
   }
 
   limpiarAnterior() {
-    console.log(this.asistenciaProfesor);
     this.asistenciaProfesorAnterior.length = 0;
     this.validateGuardarInformacion = true;
-    console.log(this.asistenciaProfesor);
   }
 
 
@@ -532,7 +513,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
 
   guardarPresente() {
     //si se genero un codigo qr este tomara el valor almacenado en la base
-    console.log(this.historial)
     if (this.historial.length > (this.numeroAlmacenado)) {
 
       let index = this.numeroAlmacenado;
@@ -540,15 +520,11 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
       this.nombreDay = splitted[0];
       this.fechaActual = splitted[1];
 
-      //console.log(this.historial[index], this.nombreDay,this.fechaActual);
 
     } else if (this.historial.length === this.numeroAlmacenado) {
-      //si son iguales quiere decir que no se ha utilizado un qr por tanto se toara el valor actual que tengas el profesor
-      //console.log('son iguales quiere decir que no se generado ningun qr');
-      this.historial.push(this.nombreDay + '//' + this.fechaActual);
+    
     }
 
-    //console.log(this.historial)
 
     if (this.asistenciaProfesor.length != 0) {
       this.nominaEstudiantes.forEach((element) => {
@@ -592,17 +568,14 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
           })
         }
       })
-      //console.log('no existen se procede a guardar la base con falta a los restantes', this.asistenciaProfesor);
     }
     //una ves termine se ejecuta la limpieza y almacenamiento y luego dejar como se encontraba
-    //console.log(this.nominaEstudiantes);
     this.almacenamientoDeAsistencia();
   }
 
   async almacenamientoDeAsistencia() {
     this.numeroAlmacenado = this.numeroAlmacenado + 1;
     let nuevoNumeroAlmacenado = String(this.numeroAlmacenado);
-    console.log(nuevoNumeroAlmacenado, this.historial);
     await this.authService.updateNomina(this.idNomina, this.idMateria, this.nominaEstudiantes, 'presente', '0', nuevoNumeroAlmacenado, this.historial);//aqui se envia el desactivamiento del cdigo
     setTimeout(() => {
       this.authService.showUpdatedata();
@@ -773,7 +746,6 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
             }
           }
 
-          console.log('retorna modal seleccion', item);
         }
 
       });

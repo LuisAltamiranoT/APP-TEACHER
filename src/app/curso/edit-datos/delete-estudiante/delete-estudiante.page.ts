@@ -29,7 +29,6 @@ export class DeleteEstudiantePage implements OnInit {
     try {
       this.validate = false;
       this.authService.deleteEstudiante(this.infoUser.idMateria, this.infoUser.idNomina,this.infoUser.array);
-      ////idMateria: any, idNomina: any,ArrayEstudiante:any
       setTimeout(() => {
         this.dialogRef.close();
         this.validate = true;

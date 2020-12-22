@@ -24,7 +24,7 @@ export class RegisterPage implements OnInit {
     apellido: new FormControl('', [Validators.required, Validators.minLength(2),Validators.pattern("[a-zA-ZáéíóúüÁÉÍÓÚÜ ]{2,48}"), this.match_apellido()]),
     email: new FormControl('', [Validators.required, Validators.email, this.matchEmail()]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    _password: new FormControl('', [Validators.required, Validators.minLength(6), this.match('password'),Validators.pattern("[0-9]{9}")]),
+    _password: new FormControl('', [Validators.required, Validators.minLength(6), this.match('password')]),
   })
 
   constructor(
@@ -64,14 +64,12 @@ export class RegisterPage implements OnInit {
       if (control.parent) { // en las primeras llamadas control.parent es undefined
         const checkValue = control.parent.controls[controlKey].value;
         if (control.value !== checkValue) {
-          //console.log('no son iguales');
           this.validacionPass = false;
           return {
             match: true
           };
         }
       }
-      //console.log('iguales');
       this.validacionPass = true;
       return null;
     };
@@ -82,17 +80,12 @@ export class RegisterPage implements OnInit {
       // control.parent es el FormGroup
       if (control.parent) { // en las primeras llamadas control.parent es undefined
         let dominio = control.value.split("@", 2);
-        //console.log(dominio[1],dominio.length);
         if (dominio[1] !== 'epn.edu.ec') {
-          //console.log(control.value,'no pertenece al dominio');
-          //this.validacionEmail=false;
           return {
             match: true
           };
         }
       }
-      //console.log('iguales');
-      //this.validacionEmail=true;
       return null;
     };
   }
@@ -103,8 +96,6 @@ export class RegisterPage implements OnInit {
       if (control.parent) {
         let data = control.value.split(' ');
         let long = data.length;
-        //console.log(data);
-        //console.log(long)
         if (long > 2) {
           this.mensaje_nombre = 'Solo puede ingresar dos nombres';
           return {
@@ -133,8 +124,6 @@ export class RegisterPage implements OnInit {
       if (control.parent) {
         let data = control.value.split(' ');
         let long = data.length;
-        //console.log(data);
-        //console.log(long)
         if (long > 2) {
           this.mensaje_apellido = 'Solo puede ingresar dos apellidos';
           return {

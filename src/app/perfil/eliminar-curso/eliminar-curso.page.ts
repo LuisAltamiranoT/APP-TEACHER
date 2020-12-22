@@ -38,20 +38,12 @@ export class EliminarCursoPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //this.materiaForm.patchValue({ materia: this.infoUser});
-    /*
-      nombre:nombre,
-      uidNomina: uidNomina,
-      image:image,
-      idMateria: idMateria,
- array:array el array de la amteria
-    */
+  
     this.materia = this.infoUser.nombre;
     this.idData = this.infoUser.idMateria;
     this.image = this.infoUser.image;
     this.nomina = this.infoUser.uidNomina;
     this.materiaSeleccionada = this.infoUser.array;
-    console.log('adsasdf', this.materiaSeleccionada, this.infoUser);
   }
 
   onClick() {

@@ -93,10 +93,7 @@ export class PerfilPage implements OnInit {
   }
 
   async network() {
-    console.log('se esta ejecutando vghhgv');
     this.networkListener = Network.addListener('networkStatusChange', status => {
-      console.log('se esta ejecutando');
-      console.log('network', status);
       this.networkStatus = status;
     });
     this.networkStatus = await Network.getStatus();
@@ -249,7 +246,6 @@ export class PerfilPage implements OnInit {
    */
 
   openEliminarCursoModal(nombre: any, uidNomina: any, image: any, idMateria: any, array: any) {
-    console.log(array)
     let dataMateria = {
       nombre: nombre,
       uidNomina: uidNomina,
