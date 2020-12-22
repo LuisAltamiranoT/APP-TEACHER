@@ -17,7 +17,7 @@ export class ApellidoPage implements OnInit {
   placeholder = "Ingresa tus apellidos";
 
   apellidoForm = new FormGroup({
-    lastName: new FormControl('', [Validators.required, Validators.minLength(4), this.match()])
+    lastName: new FormControl('', [Validators.required, Validators.minLength(4), this.match(),Validators.pattern("[a-zA-ZáéíóúüÁÉÍÓÚÜ ]{2,48}")])
   })
 
   constructor(
@@ -109,7 +109,7 @@ export class ApellidoPage implements OnInit {
           };
         }
       }
-      this.mensaje = '';
+      this.mensaje = 'No puede ingresar números';
       return null;
     };
   }

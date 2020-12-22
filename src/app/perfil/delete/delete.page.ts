@@ -36,7 +36,7 @@ export class DeletePage implements OnInit {
   ngOnInit(): void {
     this.cursos=this.infoUser.cursos;
     this.imagePerfil=this.infoUser.imagen;
-    console.log(this.cursos)
+    //onsole.log(this.cursos)
   }
 
   async onClick() {

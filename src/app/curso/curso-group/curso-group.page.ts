@@ -19,14 +19,14 @@ export class CursoGroupPage implements OnInit {
   networkStatus: NetworkStatus;
   networkListener: PluginListenerHandle;
 
-  validateMateriaGuardadas:boolean=true;
+  validateMateriaGuardadas: boolean = true;
 
   //valida la ceacion de la tabla
   validateSpinner: boolean = false;
-   //comprobar fucnionamiento del init
-   contInit:number = 0;
+  //comprobar fucnionamiento del init
+  contInit: number = 0;
 
-  img='../../../assets/icon/withoutUser.jpg';
+  img = '../../../assets/icon/withoutUser.jpg';
 
   //informacion de los cursos guardados en el sistema
   public cursoVista = [];
@@ -53,15 +53,15 @@ export class CursoGroupPage implements OnInit {
   ngOnInit(): void {
     if (this.contInit == 0) {
       this.network();
-      this.getMateria(); 
+      this.getMateria();
     }
   }
 
-  ionViewWillEnter(){
+  ionViewWillEnter() {
     this.contInit = this.contInit + 1;
     if (this.contInit > 1) {
       this.network();
-      this.getMateria(); 
+      this.getMateria();
     }
   }
 
@@ -90,10 +90,10 @@ export class CursoGroupPage implements OnInit {
         });
       })
 
-      if(this.materias.length!=0){
-        
-      }else{
-        this.validateMateriaGuardadas=false;
+      if (this.materias.length != 0) {
+        this.validateMateriaGuardadas = true;
+      } else {
+        this.validateMateriaGuardadas = false;
       }
       this.replaceCursos();
     });
@@ -104,27 +104,27 @@ export class CursoGroupPage implements OnInit {
   replaceCursos() {
     this.cursoVista.length = 0;
     this.materias.forEach(elementMateria => {
-      elementMateria.data.cursos.forEach(elementCurso => {
-        //console.log(elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id);
-        let idCurso = elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementMateria.data.nombre + ' ' + elementCurso.aula;
-        this.cursoVista.push({
-          idCursoEdit: elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementCurso.id,
-          idCurso: idCurso,
-          nombre: elementMateria.data.nombre + '-' + elementCurso.aula,
-          image: elementCurso.image,
-          photoUrl: elementMateria.data.photoUrl
-        })
-        console.log('datos obtenidos del service curso', this.cursoVista, this.materias);
-      });
-      //console.log('tamñano del curso', this.cursoVista.length);
-      if (this.cursoVista.length != 0) {
-        this.stateImage = false;
-      } else {
-        this.stateImage = true;
+      if (elementMateria.data.cursos) {
+        elementMateria.data.cursos.forEach(elementCurso => {
+          //console.log(elementCurso.uidNomina+ '//' + elementMateria.id+'//'+elementCurso.id);
+          let idCurso = elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementMateria.data.nombre + ' ' + elementCurso.aula;
+          this.cursoVista.push({
+            idCursoEdit: elementCurso.uidNomina + '//' + elementMateria.id + '//' + elementCurso.id,
+            idCurso: idCurso,
+            nombre: elementMateria.data.nombre + '-' + elementCurso.aula,
+            image: elementCurso.image,
+            photoUrl: elementMateria.data.photoUrl
+          })
+          console.log('datos obtenidos del service curso', this.cursoVista, this.materias);
+        });
       }
-
+      if (this.cursoVista.length != 0) {
+        this.stateImage = true;
+      } else {
+        this.stateImage = false;
+      }
     });
-    this.validateSpinner=true;
+    this.validateSpinner = true;
   }
 
   openCurso(id: any) {

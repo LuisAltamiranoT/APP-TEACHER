@@ -34,7 +34,7 @@ export class PerfilPage implements OnInit {
 
   //valida la ceacion de la tabla
   validateSpinner: boolean = false;
-  img='../../../assets//icon/withoutUser.jpg';
+  img='../../../assets/icon/withoutUser.jpg'
 
   image = "../../../assets/profe.jpg";
   perfil = "";

@@ -19,6 +19,10 @@ export class SendEmailPage implements OnDestroy {
     this.authService.logout();
   }
 
+  ionViewDidLeave(){
+    this.authService.logout();
+  }
+
   onSendEmail(): void {
     let data = this.authService.sendVerificationEmail();
     if (data) {

@@ -205,7 +205,7 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
         this.numeroAlmacenado = parseInt(dataNomina.numeroAlmacenado);
         this.historial = dataNomina.historial;
 
-        if(this.historial.length >= 1){
+        if(this.numeroAlmacenado >=1){
           this.validateReporte=false;
         }
 

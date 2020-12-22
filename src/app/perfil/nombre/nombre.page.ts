@@ -15,7 +15,7 @@ export class NombrePage implements OnInit {
   mensaje = '';
 
   nombreForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(4), this.match()])
+    name: new FormControl('', [Validators.required, Validators.minLength(4), this.match(),Validators.pattern("[a-zA-ZáéíóúüÁÉÍÓÚÜ ]{2,48}")])
   })
 
   constructor(
@@ -128,7 +128,7 @@ export class NombrePage implements OnInit {
           };
         }
       }
-      this.mensaje = '';
+      this.mensaje = 'No puede ingresar números';
       return null;
     };
   }

@@ -10,12 +10,14 @@
       (keypress)="IngresarSoloNumeros($event)" required>
     <mat-hint align="end">{{codigoU.value?.length || 0}}/9</mat-hint>
     <mat-icon matSuffix (click)="limpiarNumero()">backspace</mat-icon>
+    <mat-error *ngIf="estudianteForm.controls['codigoUnico'].invalid">No puede ingresar letras</mat-error>
   </mat-form-field>
   <mat-form-field appearance="standard" class="input-modal">
     <mat-label>Nombres</mat-label>
     <input matInput [type]="'text'" autocomplete="off" placeholder="Ej: Pepito" spellcheck="false"
       formControlName="estudiante" required>
     <mat-icon matSuffix (click)="limpiarNombre()">backspace</mat-icon>
+    <mat-error *ngIf="estudianteForm.controls['estudiante'].invalid">No puede ingresar números</mat-error>
   </mat-form-field>
   <mat-form-field hintLabel="Correo otorgado por la institución" appearance="standard" class="fullNivalWidth">
     <mat-label>Correo Electrónico</mat-label>
