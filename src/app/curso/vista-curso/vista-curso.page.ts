@@ -522,7 +522,7 @@ export class VistaCursoPage implements OnInit, PuedeDesactivar, OnDestroy {
 
 
     } else if (this.historial.length === this.numeroAlmacenado) {
-    
+      this.historial.push(this.nombreDay + '//' + this.fechaActual);
     }
 
 

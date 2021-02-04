@@ -1,5 +1,5 @@
 {
-  "appId": "io.ionic.starter",
+  "appId": "com.nivalprofesor.app",
   "appName": "nival-teacher",
   "bundledWebRuntime": false,
   "npmClient": "npm",
