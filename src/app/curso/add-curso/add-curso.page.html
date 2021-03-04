@@ -16,11 +16,12 @@
       <ion-col col-12 col-sm-12>
         <div class="bd-callout bd-callout-default w-100">
           <h3>
-            <a>
-              <ion-icon class="fa-nival-bottom" name="image-outline" (click)="photoInput.click()"></ion-icon>
-            </a>
+            <ion-icon class="fa-nival-bottom" name="image-outline"></ion-icon>
             Foto
-            <a style="float: right;" (click)="photoQuit()" *ngIf="validImage">
+            <a style="float: right; padding-right: 5px;">
+              <ion-icon class="fa-nival-bottom" name="cloud-upload-outline" (click)="photoInput.click()"></ion-icon>
+            </a>
+            <a style="float: right; padding-right: 10px;" (click)="photoQuit()" *ngIf="validImage">
               <ion-icon class="fa-nival-bottom" color="red" name="close-outline"></ion-icon>
             </a>
           </h3>
@@ -202,11 +203,13 @@
             </ion-row>
             <ion-row>
               <ion-col col-12 col-sm-12>
-                <ion-button expand="full" size="small" color="file_excel" style="text-transform: none;">
-                  <a style="color: white" (click)="fileInput.click()">
-                    <ion-icon class="fa-nival-bottom" name="document-text-outline"></ion-icon> Agregar Nomina
+                <h3>
+                  <ion-icon class="fa-nival-bottom" name="document-text-outline"></ion-icon>
+                  Nomina
+                  <a style="float: right; padding-right: 5px;">
+                    <ion-icon class="fa-nival-bottom" name="add-outline" (click)="fileInput.click()"></ion-icon>
                   </a>
-                </ion-button>
+                </h3>
               </ion-col>
             </ion-row>
             <ion-row>
@@ -218,6 +221,21 @@
                 </a>
                 <input type="file" style="display: none;" (change)="onFileChange($event)" #fileInput
                   formControlName="file">
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-12 col-sm-12>
+                <h3>
+                  <ion-icon color="info" class="fa-nival-bottom" name="information-circle-outline"></ion-icon>
+                  Nota
+                </h3>
+                <h4 class="ion-text-justify">Asegurese que su archivo Excel tenga las columnas <strong>Codigo,
+                    Estudiante,
+                    EmailEPN.</strong> En caso de utilizar el archivo Excel obtenido del sistema <strong>SII
+                    Académico</strong> asegurese de modificar el nombre de las columnas <strong>Código, E-mail
+                    EPN</strong> por <strong>Codigo, EmailEPN.</strong> como se muestra a continuación</h4>
+                <img class="img-fluid rounded" src="../../../assets/icon/ayuda excel 3.jpg" alt="SII Excel">
+                <img class="img-fluid rounded mt-3" src="../../../assets/icon/ayuda excel 4.jpg" alt="SII Modificado">
               </ion-col>
             </ion-row>
             <ion-row>

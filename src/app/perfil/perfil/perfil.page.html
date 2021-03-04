@@ -125,7 +125,7 @@
         <div class="bd-callout bd-callout-default">
           <h3>
             <ion-icon  class="fa-nival" name="book-sharp" style="padding-right: 3px;"></ion-icon>Cursos:
-            <a style="float: right;" (click)="openCurso()">
+            <a *ngIf="networkStatus && networkStatus.connected" style="float: right;" (click)="openCurso()">
               <ion-icon  class="fa-nival" name="add-outline"></ion-icon>
             </a>
           </h3>
